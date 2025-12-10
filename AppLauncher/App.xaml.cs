@@ -14,9 +14,6 @@ namespace AppLauncher
     public partial class App : Application
     {
 
-        public void test()
-        {
-
-        }
+      
     }
 }
