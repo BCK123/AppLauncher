@@ -25,6 +25,7 @@ namespace AppLauncher.Views
         private MainViewModel Vm => (MainViewModel)DataContext;
         public MainWindow()
         {
+
             InitializeComponent();
         }
 
