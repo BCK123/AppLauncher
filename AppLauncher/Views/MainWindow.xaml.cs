@@ -41,6 +41,8 @@ namespace AppLauncher.Views
                 var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
                 foreach (var f in files)
                 {
+                   
+
                     Vm.AddShortcutFromPath(f);
                 }
             }
