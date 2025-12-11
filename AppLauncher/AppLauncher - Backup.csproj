@@ -5,19 +5,14 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\SettingsWindow.cs" />
-    <Compile Remove="Views\Window1.xaml.cs" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Page Remove="Views\Window1.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
   </ItemGroup>
 

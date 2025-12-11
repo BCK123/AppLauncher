@@ -41,11 +41,20 @@ namespace AppLauncher.Views
                 var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
                 foreach (var f in files)
                 {
-                   
+
 
                     Vm.AddShortcutFromPath(f);
                 }
             }
         }
+
+        // BtnSettings_Click 点击跳转到SettingsWindow.xaml界面
+        private void BtnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsWindow = new SettingsWindow();
+            settingsWindow.ShowDialog();
+        }
+   
     }
 }
+
