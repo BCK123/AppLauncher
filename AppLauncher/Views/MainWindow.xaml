@@ -7,15 +7,36 @@
         <vm:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <converters:IconPathToImageConverter x:Key="IconPathToImageConverter"/>
+        <ResourceDictionary>
+            <converters:IconPathToImageConverter x:Key="IconPathToImageConverter"/>
+     
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="\Resources\Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
     </Window.Resources>
 
 
     <DockPanel>
-        
-        <TextBlock DockPanel.Dock="Top" Text="将快捷方式或 exe 拖到窗口以添加" 
-                   Padding="8" FontWeight="Bold"/>
-        <Button Content="设置" Click="BtnSettings_Click" HorizontalAlignment="Right" Margin="8"/>
+
+        <!-- 顶部栏：Grid布局 + 引用样式 -->
+        <Grid DockPanel.Dock="Top" Height="60" Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- 提示文本：引用居中样式 -->
+            <TextBlock Text="将快捷方式或 exe 拖到窗口以添加"   Padding="8" Grid.Row="0"
+                   Style="{StaticResource TopTipTextStyle}"/>
+
+            <!-- 设置按钮：引用靠右样式 -->
+            <Button Content="设置" Grid.Row="1"
+                    
+                Click="BtnSettings_Click"
+                Style="{StaticResource TopSettingsButtonStyle}"/>
+        </Grid>
+       
 
         <Border Margin="8" BorderBrush="Gray" BorderThickness="1" CornerRadius="4"
                 AllowDrop="True" Background="WhiteSmoke"
