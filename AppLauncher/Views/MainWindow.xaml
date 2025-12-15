@@ -88,7 +88,7 @@
                         <DataTemplate>
 
                             <!-- 单一 Border（一个启动项） -->
-                            <Border Width="96" Padding="8" Margin="6" CornerRadius="8" Cursor="Hand"      Style="{StaticResource BorderStyle}">
+                            <Border Width="96" Padding="8" Margin="6" CornerRadius="8" Cursor="Hand"   Style="{StaticResource BorderStyle}">
 
                                 <StackPanel Orientation="Vertical"   HorizontalAlignment="Center">
                                     

@@ -47,14 +47,20 @@ namespace AppLauncher.ViewModels
                 args = res.arguments;
             }
 
+
+
             // 避免重复（以 target 或 raw path 判重）
             if (Shortcuts.Any(s => string.Equals(s.RawSourcePath, path, StringComparison.OrdinalIgnoreCase)
                                 || string.Equals(s.TargetPath, target, StringComparison.OrdinalIgnoreCase)))
                 return;
 
+
+            string end = Path.GetFileNameWithoutExtension(Path.GetFileName(path));
+
+
             var item = new ShortcutItem
             {
-                DisplayName = Path.GetFileNameWithoutExtension(target) ?? Path.GetFileName(path),
+                DisplayName = end,
                 TargetPath = target,
                 Arguments = args,
                 RawSourcePath = path,
