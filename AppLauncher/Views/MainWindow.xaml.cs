@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace AppLauncher.Views
 
 {
@@ -47,6 +48,13 @@ namespace AppLauncher.Views
                     Vm.AddShortcutFromPath(f);
                 }
             }
+        }
+
+
+        private void BtnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO：以后这里换成 Command
+            MessageBox.Show("添加按钮点击");
         }
 
         // BtnSettings_Click 点击跳转到SettingsWindow.xaml界面

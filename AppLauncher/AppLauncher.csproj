@@ -13,12 +13,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Resources\icons\setting.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Views\Window1.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\icons\setting.png" />
   </ItemGroup>
 
 </Project>

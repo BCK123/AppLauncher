@@ -9,7 +9,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <converters:IconPathToImageConverter x:Key="IconPathToImageConverter"/>
-     
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="\Resources\Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -21,22 +21,52 @@
     <DockPanel>
 
         <!-- 顶部栏：Grid布局 + 引用样式 -->
-        <Grid DockPanel.Dock="Top" Height="60" Background="White">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <!-- 提示文本：引用居中样式 -->
-            <TextBlock Text="将快捷方式或 exe 拖到窗口以添加"   Padding="8" Grid.Row="0"
-                   Style="{StaticResource TopTipTextStyle}"/>
+        <Grid DockPanel.Dock="Top" Height="60" Background="White" 
+              HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <!-- 标题 -->
+                <ColumnDefinition Width="*"/>
+                <!-- 占满中间 -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- 右侧按钮 -->
+            </Grid.ColumnDefinitions>
 
-            <!-- 设置按钮：引用靠右样式 -->
-            <Button Content="设置" Grid.Row="1"
-                    
-                Click="BtnSettings_Click"
-                Style="{StaticResource TopSettingsButtonStyle}"/>
+
+            <!-- 标题 -->
+            <!-- 左侧标题 -->
+            <TextBlock Grid.Column="0"
+               Text="AppLauncher"
+               Style="{StaticResource TopTitleTextStyle}"
+               VerticalAlignment="Center"
+               Margin="12,0"/>
+
+            <!-- 右侧按钮区（关键：放在第 2 列） -->
+            <StackPanel Grid.Column="2"
+                Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Margin="0,0,12,0"
+                >
+
+                <Button Style="{StaticResource IconButtonStyle}"
+                ToolTip="添加"
+                Click="BtnAdd_Click" Cursor="Hand">
+                    <Image Source="/Resources/icons/setting.png"
+                          
+                   Width="18"
+                   Height="18"/>
+                </Button>
+
+                <Button Style="{StaticResource IconButtonStyle}"
+                ToolTip="设置"
+                Click="BtnSettings_Click">
+                    <Image Source="/Resources/icons/setting.png"
+                   Width="18"
+                   Height="18"/>
+                </Button>
+            </StackPanel>
         </Grid>
-       
+
 
         <Border Margin="8" BorderBrush="Gray" BorderThickness="1" CornerRadius="4"
                 AllowDrop="True" Background="WhiteSmoke"
