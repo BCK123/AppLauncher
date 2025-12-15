@@ -79,10 +79,12 @@
                         <ItemsPanelTemplate>
                             <!--ItemsControl 用 StackPanel（垂直单列）展示子项，这里通过 ItemsPanelTemplate 替换为 WrapPanel（自动换行面板）-->
                             <WrapPanel IsItemsHost="True" HorizontalAlignment="Left"/>
+                            
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
 
                     <ItemsControl.ItemTemplate>
+                        
                         <DataTemplate>
 
                             <!-- 单一 Border（一个启动项） -->
