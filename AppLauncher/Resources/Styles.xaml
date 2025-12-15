@@ -41,4 +41,23 @@
         </Setter>
     </Style>
 
+    <Style x:Key="BorderStyle" TargetType="Border">
+    
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        <!--设置左对齐-->
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        
+
+            <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#D0D7E2"/>
+                <Setter Property="BorderBrush" Value="#D0D7E2"/>
+            </Trigger>
+        </Style.Triggers>
+      
+    </Style>
+   
+
 </ResourceDictionary>

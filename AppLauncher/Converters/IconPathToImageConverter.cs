@@ -16,7 +16,9 @@ namespace AppLauncher.Converters
             if (value is string path)
             {
                 var img = IconHelper.GetIconImage(path);
+
                 return img;
+
             }
             return null;
         }
