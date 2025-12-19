@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Resources\icons\add.png" />
     <None Remove="Resources\icons\setting.png" />
   </ItemGroup>
 
@@ -27,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\icons\add.png" />
     <Resource Include="Resources\icons\setting.png" />
   </ItemGroup>
 

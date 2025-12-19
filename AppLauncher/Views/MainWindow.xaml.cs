@@ -1,4 +1,5 @@
-﻿using AppLauncher.ViewModels;
+﻿using AppLauncher.Models;
+using AppLauncher.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,10 +33,19 @@ namespace AppLauncher.Views
 
         private void Border_DragOver(object sender, DragEventArgs e)
         {
-            e.Effects = DragDropEffects.Copy;
-            e.Handled = true;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy; // ⭐ 必须
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+
+            e.Handled = true; // ⭐ 必须
         }
 
+        // 拖曳函数
         private void Border_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -48,13 +58,17 @@ namespace AppLauncher.Views
                     Vm.AddShortcutFromPath(f);
                 }
             }
+
         }
 
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
             // TODO：以后这里换成 Command
-            MessageBox.Show("添加按钮点击");
+           
+            var addCategory = new addCategory();
+            addCategory.Owner = this;
+            addCategory.ShowDialog();
         }
 
         // BtnSettings_Click 点击跳转到SettingsWindow.xaml界面
@@ -63,7 +77,17 @@ namespace AppLauncher.Views
             var settingsWindow = new SettingsWindow();
             settingsWindow.ShowDialog();
         }
-   
+
+        // 分类按钮
+        private void Category_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainViewModel vm &&
+                sender is Button btn)
+            {
+                vm.CurrentCategory = btn.Content?.ToString() ?? "全部";
+            }
+        }
+
     }
 }
 

@@ -3,10 +3,12 @@ using AppLauncher.Services;
 using AppLauncher.Utils;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
@@ -23,19 +25,64 @@ namespace AppLauncher.ViewModels
         public ICommand RemoveCommand { get; }
         public ICommand RenameCommand { get; }
 
+        private string _currentCategory = "全部";
+        public string CurrentCategory
+        {
+            get => _currentCategory;
+            set
+            {
+                _currentCategory = value;
+                ShortcutsView.Refresh();
+            }
+        }
+
+        public ICollectionView ShortcutsView { get; }
+        public ObservableCollection<CategoryItem> Categories { get; }
+
+
+
         public MainViewModel()
         {
             // 加载
             var items = _store.Load();
             foreach (var it in items) Shortcuts.Add(it);
 
+            // ⭐ 新增分类
+            ShortcutsView = CollectionViewSource.GetDefaultView(Shortcuts);
+            ShortcutsView.Filter = FilterShortcut;
+
+
             ItemDoubleClickCommand = new RelayCommand(p => ExecuteItem(p as ShortcutItem));
             RemoveCommand = new RelayCommand(p => RemoveItem(p as ShortcutItem));
             RenameCommand = new RelayCommand(p => RenameItem(p as ShortcutItem));
+
+            Categories = CategoryService.Instance.Categories;
+
+            // 确保有“全部”
+            if (!Categories.Any(c => c.Name == "全部"))
+                Categories.Insert(0, new CategoryItem { Name = "全部" });
         }
+
+        private bool FilterShortcut(object obj)
+        {
+            if (obj is not ShortcutItem item)
+                return false;
+
+            if (CurrentCategory == "全部")
+                return true;
+
+            return item.Category == CurrentCategory;
+        }
+
 
         public void AddShortcutFromPath(string path)
         {
+            if(CurrentCategory == "全部")
+            {
+                // 弹窗报警 不能添加到全部项里
+                MessageBox.Show("请选择一个分类！不能添加到全部选项！");
+                return;
+            }
             if (string.IsNullOrWhiteSpace(path)) return;
 
             string target = path;
@@ -55,7 +102,7 @@ namespace AppLauncher.ViewModels
                 return;
 
 
-            string end = Path.GetFileNameWithoutExtension(Path.GetFileName(path));
+            string end = Path.GetFileNameWithoutExtension(Path.GetFileName(path)); 
 
 
             var item = new ShortcutItem
@@ -64,7 +111,8 @@ namespace AppLauncher.ViewModels
                 TargetPath = target,
                 Arguments = args,
                 RawSourcePath = path,
-                IconPath = target
+                IconPath = target,
+                Category = CurrentCategory
             };
 
             Shortcuts.Add(item);

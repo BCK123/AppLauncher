@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Windows;
+using System.Windows.Documents;
 using AppLauncher.Models;
 
 namespace AppLauncher.Services
@@ -15,6 +17,7 @@ namespace AppLauncher.Services
         private JsonSerializerOptions _jsonOptions;
 
         public AppSettings Settings { get; private set; }
+        string oldPath = "";
 
         private SettingsService()
         {
@@ -23,6 +26,8 @@ namespace AppLauncher.Services
             _cfgFile = Path.Combine(_cfgDir, "appsettings.json");
 
             _jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+
+            
 
             Settings = Load() ?? new AppSettings();
         }
@@ -34,6 +39,10 @@ namespace AppLauncher.Services
                 if (!File.Exists(_cfgFile)) return null;
                 var json = File.ReadAllText(_cfgFile);
                 var s = JsonSerializer.Deserialize<AppSettings>(json, _jsonOptions);
+                // 获取json.JsonStoreDirectory 赋值给oldPath
+          
+                 oldPath = s?.JsonStoreDirectory + "\\AppLauncher"; // 加?避免空引用（若反序列化失败s为null）
+
                 return s;
             }
             catch
@@ -42,12 +51,46 @@ namespace AppLauncher.Services
             }
         }
 
-        public void Save()
+        public String Save()
         {
             try
             {
+                // 修改路径后 文件进行覆盖
+
+                var newBase = Path.Combine(Settings.JsonStoreDirectory!, "AppLauncher");
+                Directory.CreateDirectory(newBase);
+
+                var oldShortcut = Path.Combine(oldPath, Settings.ShortcutsFileName);
+                var newShortcut = Path.Combine(newBase, Settings.ShortcutsFileName);
+
+                if (newBase.Equals(oldPath))
+                {
+                   
+                    return "请选择一个不同的路径！";
+                }
+                var oldCategory = Path.Combine(oldPath, Settings.CategoryFileName);
+                var newCategory = Path.Combine(newBase, Settings.CategoryFileName);
+
+                if (File.Exists(oldCategory))
+                {
+
+                  
+                   // 
+                    return "当前路径存在配置文件！";
+                }
+                if (File.Exists(oldShortcut))
+                {
+               
+
+                    return "当前路径存在配置文件";
+                }
+           
+
                 var json = JsonSerializer.Serialize(Settings, _jsonOptions);
                 File.WriteAllText(_cfgFile, json);
+                Load();
+
+                return "yes";
             }
             catch (Exception ex)
             {
@@ -60,19 +103,38 @@ namespace AppLauncher.Services
         public string GetShortcutsFilePath()
         {
             // Ensure directory exists
-            var dir = string.IsNullOrWhiteSpace(Settings.ShortcutsDirectory)
+            var dir = string.IsNullOrWhiteSpace(Settings.JsonStoreDirectory)
                 ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AppLauncher")
-                : Path.Combine(Settings.ShortcutsDirectory!, "AppLauncher");
+                : Path.Combine(Settings.JsonStoreDirectory!, "AppLauncher");
 
             Directory.CreateDirectory(dir);
             return Path.Combine(dir, Settings.ShortcutsFileName);
         }
 
-        // 可选：设置新的目录并保存
-        public void SetShortcutsDirectory(string? directory)
+
+        public string GetCategoryFilePath()
         {
-            Settings.ShortcutsDirectory = string.IsNullOrWhiteSpace(directory) ? null : directory;
-            Save();
+            // Ensure directory exists
+            var dir = string.IsNullOrWhiteSpace(Settings.JsonStoreDirectory)
+                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AppLauncher")
+                : Path.Combine(Settings.JsonStoreDirectory!, "AppLauncher");
+
+            Directory.CreateDirectory(dir);
+            return Path.Combine(dir, Settings.CategoryFileName);
         }
+        // 可选：设置新的目录并保存
+        public String SetJsonStoreDirectory(string? directory)
+        {
+            Settings.JsonStoreDirectory = string.IsNullOrWhiteSpace(directory) ? null : directory;
+
+            String message = Save();
+            return message;
+        }
+
+    
+
+
+
+
     }
 }

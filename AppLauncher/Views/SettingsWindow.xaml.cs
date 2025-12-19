@@ -22,7 +22,7 @@ namespace AppLauncher.Views
         public SettingsWindow()
         {
             InitializeComponent();
-            var current = SettingsService.Instance.Settings.ShortcutsDirectory;
+            var current = SettingsService.Instance.Settings.JsonStoreDirectory;
             TxtDir.Text = current ?? string.Empty;
         }
 
@@ -44,7 +44,12 @@ namespace AppLauncher.Views
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             var newDir = string.IsNullOrWhiteSpace(TxtDir.Text) ? null : TxtDir.Text.Trim();    
-            SettingsService.Instance.SetShortcutsDirectory(newDir);
+            string message = SettingsService.Instance.SetJsonStoreDirectory(newDir);
+            if (!message.Equals("yes"))
+            {
+                System.Windows.MessageBox.Show(message);
+                return;
+            }
             System.Windows.MessageBox.Show("设置已保存，需要重载快捷项以应用新路径。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
             this.DialogResult = true;
             this.Close();

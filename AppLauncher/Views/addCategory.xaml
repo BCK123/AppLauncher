@@ -1,0 +1,26 @@
+﻿<Window x:Class="AppLauncher.Views.addCategory"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AppLauncher.Views"
+        mc:Ignorable="d"
+        Title="添加分类" Height="120" Width="200">
+    <Grid Margin="10">
+        <!-- 布局容器：水平排列文本框和按钮 -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <!-- 文本输入框：用于输入分类名称 -->
+            <TextBox x:Name="txtCategoryName" 
+                     Width="80" 
+                     Height="30"
+                VerticalContentAlignment="Center"/>
+
+                <!-- 添加按钮：点击触发添加逻辑 -->
+                <Button x:Name="btnAddCategory" 
+                    Content="添加" 
+                    Width="50" 
+                    Height="30"
+                    Click="BtnAddCategory_Click "/>
+        </StackPanel>
+    </Grid>
+</Window>

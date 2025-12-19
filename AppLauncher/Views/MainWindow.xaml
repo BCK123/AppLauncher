@@ -51,7 +51,7 @@
                 <Button Style="{StaticResource IconButtonStyle}"
                 ToolTip="添加"
                 Click="BtnAdd_Click" Cursor="Hand">
-                    <Image Source="/Resources/icons/setting.png"
+                    <Image Source="/Resources/icons/add.png"
                           
                    Width="18"
                    Height="18"/>
@@ -67,62 +67,98 @@
             </StackPanel>
         </Grid>
 
+        <Border Margin="8"
+                AllowDrop="True"
+        Drop="Border_Drop"
+        DragOver="Border_DragOver"
+        BorderBrush="Gray"
+        BorderThickness="1"
+        CornerRadius="4"
+        Background="WhiteSmoke">
 
-        <Border Margin="8" BorderBrush="Gray" BorderThickness="1" CornerRadius="4"
-                AllowDrop="True" Background="WhiteSmoke"
-                Drop="Border_Drop" DragOver="Border_DragOver">
-            <ScrollViewer>
-                <ItemsControl ItemsSource="{Binding Shortcuts}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- 分类按钮 -->
+                    <RowDefinition Height="*"/>
+                    <!-- 图标区域 -->
+                </Grid.RowDefinitions>
 
-                    <!-- 关键：改成网格排列 -->
+                <!-- ===== 分类按钮区 ===== -->
+                <!-- ===== 分类按钮区（数据绑定） ===== -->
+                <ItemsControl Grid.Row="0"
+              Margin="8"
+              ItemsSource="{Binding Categories}">
+
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <!--ItemsControl 用 StackPanel（垂直单列）展示子项，这里通过 ItemsPanelTemplate 替换为 WrapPanel（自动换行面板）-->
-                            <WrapPanel IsItemsHost="True" HorizontalAlignment="Left"/>
-                            
+                            <StackPanel Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
 
                     <ItemsControl.ItemTemplate>
-                        
                         <DataTemplate>
-
-                            <!-- 单一 Border（一个启动项） -->
-                            <Border Width="96" Padding="8" Margin="6" CornerRadius="8" Cursor="Hand"   Style="{StaticResource BorderStyle}">
-
-                                <StackPanel Orientation="Vertical"   HorizontalAlignment="Center">
-                                    
-                                    
-                                    <!-- 图标 -->
-                                    <Image Width="48" Height="48" Margin="4"
-                           Source="{Binding IconPath, Converter={StaticResource IconPathToImageConverter}}"/>
-
-                                    <!-- 名称 -->
-                                    <TextBlock Text="{Binding DisplayName}"
-                               Margin="0,6,0,0"
-                               FontSize="12"
-                               TextAlignment="Center"
-                               TextWrapping="Wrap"
-                               TextTrimming="CharacterEllipsis"
-                                               
-                               MaxWidth="80"/>
-                                </StackPanel>
-
-                                <!-- 单击启动 -->
-                                <Border.InputBindings>
-                                    <MouseBinding MouseAction="LeftClick"
-                                  Command="{Binding DataContext.ItemDoubleClickCommand,
-                                            RelativeSource={RelativeSource AncestorType=Window}}"
-                                  CommandParameter="{Binding}"/>
-                                </Border.InputBindings>
-
-                            </Border>
-
+                            <Button Content="{Binding Name}"
+                    Margin="4"
+                    Padding="10,4"
+                  Click="Category_Click"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
+
                 </ItemsControl>
 
-            </ScrollViewer>
+
+                <!-- ===== 图标区 ===== -->
+                <ScrollViewer Grid.Row="1">
+
+                    <ItemsControl ItemsSource="{Binding ShortcutsView}">
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="96"
+                                Padding="8"
+                                Margin="6"
+                                CornerRadius="8"
+                                Cursor="Hand"
+                                Style="{StaticResource BorderStyle}">
+
+                                    <StackPanel HorizontalAlignment="Center">
+
+                                        <Image Width="48"
+                                       Height="48"
+                                       Source="{Binding IconPath,
+                                       Converter={StaticResource IconPathToImageConverter}}"/>
+
+                                        <TextBlock Text="{Binding DisplayName}"
+                                           FontSize="12"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           MaxWidth="80"/>
+                                    </StackPanel>
+
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding DataContext.ItemDoubleClickCommand,
+                                              RelativeSource={RelativeSource AncestorType=Window}}"
+                                              CommandParameter="{Binding}"/>
+                                    </Border.InputBindings>
+
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                </ScrollViewer>
+
+            </Grid>
         </Border>
+
     </DockPanel>
 </Window>
