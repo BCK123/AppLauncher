@@ -1,22 +1,28 @@
 ﻿<Window x:Class="AppLauncher.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:controls="clr-namespace:HandyControl.Controls;assembly=HandyControl"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:AppLauncher.ViewModels" xmlns:converters="clr-namespace:AppLauncher.Converters"
+    
         Title="AppLauncher" Height="520" Width="420">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
+     
         <ResourceDictionary>
+            
             <converters:IconPathToImageConverter x:Key="IconPathToImageConverter"/>
-
+            <converters:VisibilityConverter x:Key="VisibilityConverter"/>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="\Resources\Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            
         </ResourceDictionary>
-
+        
     </Window.Resources>
-
+   
 
     <DockPanel>
 
@@ -87,8 +93,8 @@
                 <!-- ===== 分类按钮区 ===== -->
                 <!-- ===== 分类按钮区（数据绑定） ===== -->
                 <ItemsControl Grid.Row="0"
-              Margin="8"
-              ItemsSource="{Binding Categories}">
+              Margin="8,0,8,8"
+              ItemsSource="{Binding Categories}" Height="36" VerticalAlignment="Bottom">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -98,11 +104,34 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
+
                             <Button Content="{Binding Name}"
-                    Margin="4"
-                    Padding="10,4"
-                  Click="Category_Click"/>
+        Margin="4"
+        Padding="10,4"
+        Click="Category_Click"
+        controls:BackgroundSwitchElement.MouseHoverBackground="#D2D2D2"
+        controls:BackgroundSwitchElement.MouseDownBackground="#BDBDBD"
+        ContextMenuService.IsEnabled="True">
+
+                                <Button.ContextMenu>
+                                    <ContextMenu
+           PlacementTarget="{Binding ElementName=testBtn}"
+        
+                                        Visibility="{Binding PlacementTarget.Content, 
+                        RelativeSource={RelativeSource Self}, 
+                        Converter={StaticResource VisibilityConverter}}">
+
+                                        <MenuItem Header="重命名"
+                      Click="RenameCategory_Click"/>
+
+                                        <MenuItem Header="删除"
+                      Click="DeleteCategory_Click"/>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                            </Button>
+
                         </DataTemplate>
+
                     </ItemsControl.ItemTemplate>
 
                 </ItemsControl>

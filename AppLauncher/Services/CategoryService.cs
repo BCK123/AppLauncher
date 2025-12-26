@@ -1,4 +1,5 @@
 ﻿using AppLauncher.Models;
+using HandyControl.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using static System.Net.WebRequestMethods;
 
 namespace AppLauncher.Services
@@ -53,6 +55,53 @@ namespace AppLauncher.Services
 
             return item;
         }
+
+        public void Delete(CategoryItem category)
+        {
+            if (category == null) return;
+
+            if (category.Name == "全部")
+                throw new InvalidOperationException("不能删除默认分类");
+            // 弹窗二次确认
+            var confirmResult = HandyControl.Controls.MessageBox.Show($"确定要删除分类「{category.Name}」吗？",
+                "确认删除", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            Categories.Remove(category);
+            Save();
+        }
+
+        public void Rename(CategoryItem category, string newName)
+        {
+            if (category == null)
+                throw new ArgumentNullException(nameof(category));
+
+            newName = newName.Trim();
+
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentException("分类名不能为空");
+
+            if (category.Name == "全部")
+                throw new InvalidOperationException("不能重命名默认分类");
+
+            if (Categories.Any(c =>
+                    !ReferenceEquals(c, category) &&
+                    string.Equals(c.Name, newName, StringComparison.OrdinalIgnoreCase)))
+                throw new InvalidOperationException("分类名已存在");
+
+            string oldName = category.Name;
+
+            // ① 更新分类自身
+            category.Name = newName;
+
+   
+
+            // ③ 持久化
+            Save();
+        }
+
+
+
+
         private ObservableCollection<CategoryItem> Load()
         {
             if (!System.IO.File.Exists(_filePath))
@@ -82,7 +131,7 @@ namespace AppLauncher.Services
                 };
             }
         }
-        private void Save()
+        public void Save()
         {
             var json = JsonSerializer.Serialize(
          Categories,

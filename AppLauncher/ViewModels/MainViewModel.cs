@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
@@ -50,7 +51,7 @@ namespace AppLauncher.ViewModels
             // ⭐ 新增分类
             ShortcutsView = CollectionViewSource.GetDefaultView(Shortcuts);
             ShortcutsView.Filter = FilterShortcut;
-
+            
 
             ItemDoubleClickCommand = new RelayCommand(p => ExecuteItem(p as ShortcutItem));
             RemoveCommand = new RelayCommand(p => RemoveItem(p as ShortcutItem));
@@ -160,7 +161,37 @@ namespace AppLauncher.ViewModels
             {
                 item.DisplayName = input;
                 Save();
+                ShortcutsView.Refresh();
             }
         }
+
+
+        public void DeleteCategory(CategoryItem category)
+        {
+            if (category == null) return;
+
+            // 1️⃣ 删分类（持久化）
+            CategoryService.Instance.Delete(category);
+
+            // 2️⃣ 修复快捷方式引用
+            foreach (var s in Shortcuts)
+            {
+                if (s.Category == category.Name)
+                {
+                    s.Category = "全部";
+                }
+            }
+
+            // 3️⃣ 当前分类回退
+            if (CurrentCategory == category.Name)
+            {
+                CurrentCategory = "全部";
+            }
+
+            Save(); // 保存快捷方式
+        }
+
+
+
     }
 }

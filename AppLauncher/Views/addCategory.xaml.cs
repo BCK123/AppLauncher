@@ -54,6 +54,12 @@ namespace AppLauncher.Views
 
         }
    
+        // 删除操作
+        private void BtnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;   // ⭐ 告诉调用方失败
+            Close();
+        }
     
     
     }

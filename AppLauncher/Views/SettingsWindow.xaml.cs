@@ -60,5 +60,7 @@ namespace AppLauncher.Views
             this.DialogResult = false;
             this.Close();
         }
+
+
     }
 }

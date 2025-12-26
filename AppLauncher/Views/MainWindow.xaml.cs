@@ -1,4 +1,5 @@
 ﻿using AppLauncher.Models;
+using AppLauncher.Services;
 using AppLauncher.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -86,6 +87,71 @@ namespace AppLauncher.Views
             {
                 vm.CurrentCategory = btn.Content?.ToString() ?? "全部";
             }
+        }
+
+
+        private void DeleteCategory_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menu &&
+                menu.DataContext is CategoryItem category &&
+                DataContext is MainViewModel vm)
+            {
+                if (MessageBox.Show(
+                        $"确定删除分类「{category.Name}」？\n该分类下的项目将移到【全部】",
+                        "确认",
+                        MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+
+                vm.DeleteCategory(category);
+            }
+        }
+
+
+        // 重命名分类
+        private void RenameCategory_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem menu)
+                return;
+
+            if (menu.DataContext is not CategoryItem category)
+                return;
+            // 获取老名
+            var oldName = category.Name;
+            // 弹输入框
+            var input = Microsoft.VisualBasic.Interaction.InputBox(
+                "请输入新的分类名称",
+                "重命名分类",
+                category.Name);
+
+            if (string.IsNullOrWhiteSpace(input))
+                return;
+
+            // 不允许重名
+            var categories = CategoryService.Instance.Categories;
+            //categories的第一个下标的name是全部
+               
+     
+            if (input == "全部")
+            {
+                MessageBox.Show("不能重命名为全部", "提示");
+                return;
+            }
+            if (categories.Any(c => c != category && c.Name == input))
+            {
+                MessageBox.Show("已存在同名分类", "提示");
+                return;
+            }
+
+            // 修改名称
+            ShortcutStore.Instance.Update(oldName, input);
+
+            // 修改名称（UI 自动刷新）
+            category.Name = input;
+
+            // 持久化保存
+            CategoryService.Instance.Save();
+         
+
         }
 
     }

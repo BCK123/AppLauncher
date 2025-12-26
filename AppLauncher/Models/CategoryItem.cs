@@ -21,7 +21,7 @@ namespace AppLauncher.Models
                 if (_name != value)
                 {
                     _name = value;
-                    //通知 UI 更新
+                    //通知 UI 更新  否则修改后界面不会刷新
                     OnPropertyChanged();
                 }
             }
