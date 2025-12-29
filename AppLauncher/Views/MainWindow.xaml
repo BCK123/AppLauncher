@@ -9,20 +9,20 @@
         <vm:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
-     
+
         <ResourceDictionary>
-            
+
             <converters:IconPathToImageConverter x:Key="IconPathToImageConverter"/>
             <converters:VisibilityConverter x:Key="VisibilityConverter"/>
-            
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="\Resources\Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
+
         </ResourceDictionary>
-        
+
     </Window.Resources>
-   
+
 
     <DockPanel>
 
@@ -93,8 +93,8 @@
                 <!-- ===== 分类按钮区 ===== -->
                 <!-- ===== 分类按钮区（数据绑定） ===== -->
                 <ItemsControl Grid.Row="0"
-              Margin="8,0,8,8"
-              ItemsSource="{Binding Categories}" Height="36" VerticalAlignment="Bottom">
+              Margin="8,0,8,0"
+              ItemsSource="{Binding Categories}" Height="36" VerticalAlignment="Top">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

@@ -33,6 +33,7 @@ namespace AppLauncher.ViewModels
             set
             {
                 _currentCategory = value;
+
                 ShortcutsView.Refresh();
             }
         }
@@ -41,12 +42,18 @@ namespace AppLauncher.ViewModels
         public ObservableCollection<CategoryItem> Categories { get; }
 
 
-
-        public MainViewModel()
+        public void LoadModel()
         {
+            Shortcuts.Clear();
             // 加载
             var items = _store.Load();
             foreach (var it in items) Shortcuts.Add(it);
+        }
+
+        public MainViewModel()
+        {
+
+            LoadModel();
 
             // ⭐ 新增分类
             ShortcutsView = CollectionViewSource.GetDefaultView(Shortcuts);
@@ -81,7 +88,7 @@ namespace AppLauncher.ViewModels
             if(CurrentCategory == "全部")
             {
                 // 弹窗报警 不能添加到全部项里
-                MessageBox.Show("请选择一个分类！不能添加到全部选项！");
+                System.Windows.MessageBox.Show("请选择一个分类！不能添加到全部选项！");
                 return;
             }
             if (string.IsNullOrWhiteSpace(path)) return;
@@ -140,14 +147,14 @@ namespace AppLauncher.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"无法启动：{ex.Message}");
+                System.Windows.MessageBox.Show($"无法启动：{ex.Message}");
             }
         }
 
         private void RemoveItem(ShortcutItem? item)
         {
             if (item == null) return;
-            if (MessageBox.Show($"移除 {item.DisplayName} ?", "确认", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+            if (System.Windows.MessageBox.Show($"移除 {item.DisplayName} ?", "确认", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
             Shortcuts.Remove(item);
             Save();
         }
@@ -161,6 +168,7 @@ namespace AppLauncher.ViewModels
             {
                 item.DisplayName = input;
                 Save();
+          
                 ShortcutsView.Refresh();
             }
         }

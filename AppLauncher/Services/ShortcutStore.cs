@@ -1,4 +1,5 @@
 ﻿using AppLauncher.Models;
+using AppLauncher.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,6 +35,8 @@ namespace AppLauncher.Services
             if (!File.Exists(_file)) return new List<ShortcutItem>();
             var json = File.ReadAllText(_file);
             var items = JsonSerializer.Deserialize<List<ShortcutItem>>(json);
+            // 刷新 Shortcuts 防止幂数次增长
+            Shortcuts.Clear();
             foreach (var item in items)
             {
                 Shortcuts.Add(item);
@@ -48,6 +51,7 @@ namespace AppLauncher.Services
             File.WriteAllText(tmp, json);
             File.Move(tmp, _file, true);
             Load();
+          
         }
         // 查询 所有ShortcutItem 通过Category 字段
         public IEnumerable<ShortcutItem> Query(string category)

@@ -150,7 +150,19 @@ namespace AppLauncher.Views
 
             // 持久化保存
             CategoryService.Instance.Save();
-         
+
+            // 如果当前正选中被重命名的分类   更新当前选中的内容
+            if (Vm.CurrentCategory == oldName)
+            {
+                Vm.CurrentCategory = input; // ⭐ 关键
+            }
+
+            // 刷新 修改分类名后实现刷新
+            Vm.LoadModel();
+
+          
+
+
 
         }
 
