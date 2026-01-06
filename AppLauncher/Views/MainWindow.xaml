@@ -24,6 +24,9 @@
     </Window.Resources>
 
 
+    <!--❗ 在 DockPanel 里：
+谁是“最后一个子元素”，谁就会“填满剩余空间”-->
+
     <DockPanel>
 
         <!-- 顶部栏：Grid布局 + 引用样式 -->
@@ -36,6 +39,8 @@
                 <!-- 占满中间 -->
                 <ColumnDefinition Width="Auto"/>
                 <!-- 右侧按钮 -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- 底部 -->
             </Grid.ColumnDefinitions>
 
 
@@ -72,7 +77,14 @@
                 </Button>
             </StackPanel>
         </Grid>
-
+        <!-- 顶部栏：Grid布局 + 引用样式 -->
+        <Grid DockPanel.Dock="Bottom" Height="60" Width="410" Background="White">
+            <!-- 使用StackPanel实现横向排列，设置左对齐 -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="CPU" Margin="5,0" />
+                <TextBlock Text="{Binding Monitor.CpuUsage, StringFormat={}{0:F2}%}" />
+            </StackPanel>
+        </Grid>
         <Border Margin="8"
                 AllowDrop="True"
         Drop="Border_Drop"
@@ -140,7 +152,10 @@
                 <!-- ===== 图标区 ===== -->
                 <ScrollViewer Grid.Row="1">
 
-                    <ItemsControl ItemsSource="{Binding ShortcutsView}">
+                    <ItemsControl ItemsSource="{Binding ShortcutsView}"
+                                   VirtualizingPanel.IsVirtualizing="True"
+    VirtualizingPanel.VirtualizationMode="Recycling"
+    ScrollViewer.IsDeferredScrollingEnabled="True">
 
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -188,6 +203,7 @@
 
             </Grid>
         </Border>
+
 
     </DockPanel>
 </Window>

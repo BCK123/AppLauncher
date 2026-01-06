@@ -1,5 +1,4 @@
 ﻿using AppLauncher.Models;
-using AppLauncher.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

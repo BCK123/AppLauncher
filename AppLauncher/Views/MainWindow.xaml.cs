@@ -159,11 +159,6 @@ namespace AppLauncher.Views
 
             // 刷新 修改分类名后实现刷新
             Vm.LoadModel();
-
-          
-
-
-
         }
 
     }

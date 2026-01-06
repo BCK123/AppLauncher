@@ -50,9 +50,11 @@ namespace AppLauncher.ViewModels
             foreach (var it in items) Shortcuts.Add(it);
         }
 
+    
+
         public MainViewModel()
         {
-
+            Monitor = new SystemMonitorService();
             LoadModel();
 
             // ⭐ 新增分类
@@ -69,6 +71,13 @@ namespace AppLauncher.ViewModels
             // 确保有“全部”
             if (!Categories.Any(c => c.Name == "全部"))
                 Categories.Insert(0, new CategoryItem { Name = "全部" });
+            // 监控
+            // UI 就绪后再启动
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+                new Action(() => Monitor.Start()),
+                System.Windows.Threading.DispatcherPriority.Background);
+
+
         }
 
         private bool FilterShortcut(object obj)
@@ -200,6 +209,7 @@ namespace AppLauncher.ViewModels
         }
 
 
+        public SystemMonitorService Monitor { get; }
 
     }
 }
