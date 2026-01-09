@@ -63,9 +63,11 @@ namespace AppLauncher.ViewModels
             
 
             ItemDoubleClickCommand = new RelayCommand(p => ExecuteItem(p as ShortcutItem));
+            // 分类 对应的事件
             RemoveCommand = new RelayCommand(p => RemoveItem(p as ShortcutItem));
             RenameCommand = new RelayCommand(p => RenameItem(p as ShortcutItem));
 
+            // 数据对应的事件 
             Categories = CategoryService.Instance.Categories;
 
             // 确保有“全部”
@@ -168,20 +170,23 @@ namespace AppLauncher.ViewModels
             Save();
         }
 
+
+        // 4. 修正重命名方法（参数是 ShortcutItem，恢复正确逻辑）
         private void RenameItem(ShortcutItem? item)
         {
             if (item == null) return;
-            // 简单示例：弹窗输入框（可以用自定义 Dialog）
+
+            // 弹出输入框，默认显示当前名称
             var input = Microsoft.VisualBasic.Interaction.InputBox("重命名", "修改显示名", item.DisplayName);
-            if (!string.IsNullOrWhiteSpace(input))
+            if (!string.IsNullOrWhiteSpace(input) && input != item.DisplayName)
             {
+                // 修改 ShortcutItem 的 DisplayName（关键！）
                 item.DisplayName = input;
                 Save();
-          
-                ShortcutsView.Refresh();
+                // 如果 ShortcutItem 实现了 INotifyPropertyChanged，这里不需要 Refresh
+                // ShortcutsView.Refresh();
             }
         }
-
 
         public void DeleteCategory(CategoryItem category)
         {
