@@ -1,4 +1,9 @@
-﻿using System;
+﻿using AppLauncher.Services;
+using AppLauncher.ViewModels;
+using AppLauncher.Views;
+using Prism.DryIoc;
+using Prism.Ioc;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -11,9 +16,22 @@ namespace AppLauncher
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : PrismApplication
     {
+        protected override Window CreateShell()
+        {
+            return Container.Resolve<MainWindow>();
+        }
 
-      
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterSingleton<CategoryService, CategoryService>();
+            containerRegistry.RegisterSingleton<ShortcutStore, ShortcutStore>();
+            containerRegistry.RegisterSingleton<MainWindowViewModel>();
+
+            // 注册界面
+            containerRegistry.Register<addCategory>(); // 👈 关键
+        }
+
     }
 }

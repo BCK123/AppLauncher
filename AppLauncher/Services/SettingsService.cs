@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Documents;
+using Accessibility;
 using AppLauncher.Models;
 
 namespace AppLauncher.Services
@@ -10,6 +11,9 @@ namespace AppLauncher.Services
     public class SettingsService
     {
         private static readonly Lazy<SettingsService> _lazy = new(() => new SettingsService());
+
+        private  readonly CategoryService _categoryService;
+
         public static SettingsService Instance => _lazy.Value;
 
         private readonly string _cfgDir;
@@ -27,7 +31,7 @@ namespace AppLauncher.Services
 
             _jsonOptions = new JsonSerializerOptions { WriteIndented = true };
 
-            
+      
 
             Settings = Load() ?? new AppSettings();
         }
@@ -71,14 +75,14 @@ namespace AppLauncher.Services
                 var oldCategory = Path.Combine(oldPath, Settings.CategoryFileName);
                 var newCategory = Path.Combine(newBase, Settings.CategoryFileName);
 
-                if (File.Exists(oldCategory))
+                if (File.Exists(newCategory))
                 {
 
                   
                    // 
                     return "当前路径存在配置文件！";
                 }
-                if (File.Exists(oldShortcut))
+                if (File.Exists(newCategory))
                 {
                
 
@@ -87,10 +91,29 @@ namespace AppLauncher.Services
            
 
                 var json = JsonSerializer.Serialize(Settings, _jsonOptions);
-                File.WriteAllText(_cfgFile, json);
+                try
+                {
+                    File.WriteAllText(_cfgFile, json);
+                    // 2. 执行两个核心文件的迁移
+                    File.Move(oldShortcut, newShortcut);   // 迁移 shortcuts.json
+                    File.Move(oldCategory, newCategory);   // 迁移 category.json
+                }
+              
+
+                catch (UnauthorizedAccessException ex)
+                {
+                   
+                    throw new Exception("保存设置失败111: " + ex.Message, ex);
+                }
+                catch (Exception ex)
+                {
+                    // 记录权限
+                    throw new Exception("保存设置失败: " + ex.Message, ex);
+                }
                 Load();
 
-                return "yes";
+             _categoryService.CatrgoryOnSetting();
+                 return "yes";
             }
             catch (Exception ex)
             {

@@ -15,21 +15,24 @@ namespace AppLauncher.Services
 {
     public class CategoryService
     {
-        private readonly string _filePath;
-        private static CategoryService? _instance;
-        public static CategoryService Instance
-            => _instance ??= new CategoryService();
+        private  string _filePath;
+     
+
+        private readonly SettingsService _settingsService;
 
         public ObservableCollection<CategoryItem> Categories { get; }
 
-        public CategoryService()
+        public CategoryService(SettingsService settingsService)
         {
-            _filePath = SettingsService.Instance.GetCategoryFilePath();
+            _settingsService = settingsService;
+            _filePath = _settingsService.GetCategoryFilePath();
 
 
             Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
 
             Categories = Load();
+
+            
         }
 
         #region Public API
@@ -121,6 +124,7 @@ namespace AppLauncher.Services
                 return new ObservableCollection<CategoryItem>(
                     list ?? new List<CategoryItem>()
                 );
+
             }
             catch
             {
@@ -130,6 +134,11 @@ namespace AppLauncher.Services
                     new CategoryItem { Name = "全部" }
                 };
             }
+        }
+
+        public void CatrgoryOnSetting()
+        {
+            _filePath = _settingsService.GetCategoryFilePath();
         }
         public void Save()
         {

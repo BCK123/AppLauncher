@@ -1,6 +1,7 @@
 ﻿using AppLauncher.Models;
 using AppLauncher.Services;
 using AppLauncher.ViewModels;
+using Prism.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,9 +26,14 @@ namespace AppLauncher.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainViewModel Vm => (MainViewModel)DataContext;
-        public MainWindow()
+        private readonly CategoryService _categoryService;
+        private MainWindowViewModel Vm => (MainWindowViewModel)DataContext;
+
+        private readonly IContainerProvider _container;
+        public MainWindow(IContainerProvider container, CategoryService categoryService)
         {
+            _categoryService = categoryService;
+            _container = container;
 
             InitializeComponent();
         }
@@ -36,7 +42,7 @@ namespace AppLauncher.Views
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                e.Effects = DragDropEffects.Copy; // ⭐ 必须
+                e.Effects = DragDropEffects.Copy; // ⭐ 必须   
             }
             else
             {
@@ -67,7 +73,7 @@ namespace AppLauncher.Views
         {
             // TODO：以后这里换成 Command
            
-            var addCategory = new addCategory();
+            var addCategory = _container.Resolve<addCategory>();
             addCategory.Owner = this;
             addCategory.ShowDialog();
         }
@@ -82,7 +88,7 @@ namespace AppLauncher.Views
         // 分类按钮
         private void Category_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainViewModel vm &&
+            if (DataContext is MainWindowViewModel vm &&
                 sender is Button btn)
             {
                 vm.CurrentCategory = btn.Content?.ToString() ?? "全部";
@@ -94,7 +100,7 @@ namespace AppLauncher.Views
         {
             if (sender is MenuItem menu &&
                 menu.DataContext is CategoryItem category &&
-                DataContext is MainViewModel vm)
+                DataContext is MainWindowViewModel vm)
             {
                 if (MessageBox.Show(
                         $"确定删除分类「{category.Name}」？\n该分类下的项目将移到【全部】",
@@ -127,7 +133,7 @@ namespace AppLauncher.Views
                 return;
 
             // 不允许重名
-            var categories = CategoryService.Instance.Categories;
+            var categories = _categoryService.Categories;
             //categories的第一个下标的name是全部
                
      
@@ -149,7 +155,7 @@ namespace AppLauncher.Views
             category.Name = input;
 
             // 持久化保存
-            CategoryService.Instance.Save();
+            _categoryService.Save();
 
             // 如果当前正选中被重命名的分类   更新当前选中的内容
             if (Vm.CurrentCategory == oldName)

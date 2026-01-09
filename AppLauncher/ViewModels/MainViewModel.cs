@@ -1,6 +1,9 @@
 ﻿using AppLauncher.Models;
 using AppLauncher.Services;
 using AppLauncher.Utils;
+using AppLauncher.Views;
+using Prism.Commands;
+using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,10 +17,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 
-
 namespace AppLauncher.ViewModels
 {
-    public class MainViewModel : DependencyObject
+    //Prism 默认 只认识MainWindowViewModel 这个名字。
+    public class MainWindowViewModel :  BindableBase
     {
         private readonly ShortcutStore _store = new ShortcutStore();
         public ObservableCollection<ShortcutItem> Shortcuts { get; } = new ObservableCollection<ShortcutItem>();
@@ -26,7 +29,18 @@ namespace AppLauncher.ViewModels
         public ICommand RemoveCommand { get; }
         public ICommand RenameCommand { get; }
 
+        public ICommand SelectCategoryCommand { get; }
+
+        public ICommand RenameCategoryCommand { get; }
+
+        public ICommand DeleteCategoryCommand { get; }
+
+        public ICommand OpenSettingsCommand { get; }
+
+
         private string _currentCategory = "全部";
+
+        private readonly CategoryService _categoryService;
         public string CurrentCategory
         {
             get => _currentCategory;
@@ -52,9 +66,10 @@ namespace AppLauncher.ViewModels
 
     
 
-        public MainViewModel()
+        public MainWindowViewModel(CategoryService categoryService)
         {
             Monitor = new SystemMonitorService();
+           _categoryService = categoryService;
             LoadModel();
 
             // ⭐ 新增分类
@@ -63,10 +78,52 @@ namespace AppLauncher.ViewModels
             
 
             ItemDoubleClickCommand = new RelayCommand(p => ExecuteItem(p as ShortcutItem));
+            // 分类 对应的事件
             RemoveCommand = new RelayCommand(p => RemoveItem(p as ShortcutItem));
             RenameCommand = new RelayCommand(p => RenameItem(p as ShortcutItem));
 
-            Categories = CategoryService.Instance.Categories;
+            SelectCategoryCommand = new RelayCommand(p =>
+            {
+                if (p is CategoryItem c)
+                    CurrentCategory = c.Name;
+            });
+
+            RenameCategoryCommand = new RelayCommand(p =>
+            {
+                if (p is not CategoryItem category) return;
+
+                var input = Microsoft.VisualBasic.Interaction.InputBox(
+                    "重命名分类",
+                    "修改分类名",
+                    category.Name);
+
+                if (string.IsNullOrWhiteSpace(input) || input == category.Name)
+                    return;
+
+                _categoryService.Rename(category, input);
+
+                // 修正快捷方式分类名
+                foreach (var s in Shortcuts)
+                {
+                    if (s.Category == category.Name)
+                        s.Category = input;
+                }
+
+                Save();
+            });
+
+
+            DeleteCategoryCommand = new RelayCommand(p =>
+            {
+                if (p is not CategoryItem category) return;
+                DeleteCategory(category);
+            });
+
+
+
+            OpenSettingsCommand = new RelayCommand(p => BtnSettings_Click(null, null));
+            // 数据对应的事件 
+            Categories = _categoryService.Categories;
 
             // 确保有“全部”
             if (!Categories.Any(c => c.Name == "全部"))
@@ -141,6 +198,11 @@ namespace AppLauncher.ViewModels
             _store.Save(Shortcuts);
         }
 
+        private void BtnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsWindow = new SettingsWindow();
+            settingsWindow.ShowDialog();
+        }
         private void ExecuteItem(ShortcutItem? item)
         {
             if (item == null) return;
@@ -168,27 +230,30 @@ namespace AppLauncher.ViewModels
             Save();
         }
 
+
+        // 4. 修正重命名方法（参数是 ShortcutItem，恢复正确逻辑）
         private void RenameItem(ShortcutItem? item)
         {
             if (item == null) return;
-            // 简单示例：弹窗输入框（可以用自定义 Dialog）
+
+            // 弹出输入框，默认显示当前名称
             var input = Microsoft.VisualBasic.Interaction.InputBox("重命名", "修改显示名", item.DisplayName);
-            if (!string.IsNullOrWhiteSpace(input))
+            if (!string.IsNullOrWhiteSpace(input) && input != item.DisplayName)
             {
+                // 修改 ShortcutItem 的 DisplayName（关键！）
                 item.DisplayName = input;
                 Save();
-          
-                ShortcutsView.Refresh();
+                // 如果 ShortcutItem 实现了 INotifyPropertyChanged，这里不需要 Refresh
+                // ShortcutsView.Refresh();
             }
         }
-
 
         public void DeleteCategory(CategoryItem category)
         {
             if (category == null) return;
 
             // 1️⃣ 删分类（持久化）
-            CategoryService.Instance.Delete(category);
+            _categoryService.Delete(category);
 
             // 2️⃣ 修复快捷方式引用
             foreach (var s in Shortcuts)

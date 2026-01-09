@@ -20,9 +20,12 @@ namespace AppLauncher.Views
     /// </summary>
     public partial class addCategory : Window
     {
+
+        private readonly  CategoryService CategoryService;
        
-        public addCategory()
+        public addCategory(CategoryService categoryService)
         {
+            CategoryService = categoryService;
             InitializeComponent();
            
         }
@@ -42,7 +45,7 @@ namespace AppLauncher.Views
             try
             {
                 // 构造 单实例 不需要构造函数注入
-                CategoryService.Instance.Add(categoryName);
+                CategoryService.Add(categoryName);
                 DialogResult = true;   // ⭐ 通知调用方成功
                 Close();
             }
