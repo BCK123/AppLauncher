@@ -127,19 +127,9 @@
                                 Command="{Binding AddCategoryCommand}"
                                 Content="{Binding Name}"
                                 ContextMenuService.IsEnabled="True">
-
-                                    <ContextMenu
-           PlacementTarget="{Binding ElementName=testBtn}"
-        
-                                        Visibility="{Binding PlacementTarget.Content, 
-                        RelativeSource={RelativeSource Self}, 
-                        Converter={StaticResource VisibilityConverter}}">
-
-                                        <MenuItem Header="重命名"
-                      Click="RenameCategory_Click"/>
-
-                                        <MenuItem Header="删除"
-                      Click="DeleteCategory_Click"/>
+                                <Button.ContextMenu>
+                                    <ContextMenu PlacementTarget="{Binding ElementName=testBtn}" Visibility="{Binding PlacementTarget.Content, RelativeSource={RelativeSource Self}, Converter={StaticResource VisibilityConverter}}">
+                                        <MenuItem Click="RenameCategory_Click" Header="重命名" />
                                         <MenuItem Click="DeleteCategory_Click" Header="删除" />
                                     </ContextMenu>
                                 </Button.ContextMenu>
@@ -160,6 +150,7 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
+                            <DataTemplate>
                                 <Border
                                     Width="96"
                                     Margin="6"
@@ -170,7 +161,7 @@
                                     <!--  修复右键菜单绑定  加上这一段实现右击事件  -->
                                     <Border.ContextMenu>
                                         <ContextMenu DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
-                                Style="{StaticResource BorderStyle}">
+
                                             <MenuItem
                                                 Command="{Binding DataContext.RenameCategoryCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                                 CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
@@ -181,39 +172,30 @@
                                                 Header="删除" />
                                         </ContextMenu>
                                     </Border.ContextMenu>
-
-
-                                        <Image Width="48"
-                                       Height="48"
-                                       Source="{Binding IconPath,
-                                       Converter={StaticResource IconPathToImageConverter}}"/>
-
-                                        <TextBlock Text="{Binding DisplayName}"
-                                           FontSize="12"
-                                           TextAlignment="Center"
-                                           TextWrapping="Wrap"
-                                           MaxWidth="80"/>
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <Image
+                                            Width="48"
+                                            Height="48"
+                                            Source="{Binding IconPath, Converter={StaticResource IconPathToImageConverter}}" />
+                                        <TextBlock
+                                            MaxWidth="80"
+                                            FontSize="12"
+                                            Text="{Binding DisplayName}"
+                                            TextAlignment="Center"
                                             TextWrapping="Wrap" />
-
                                     </StackPanel>
-                                        <MouseBinding MouseAction="LeftClick"
-                                              Command="{Binding DataContext.ItemDoubleClickCommand,
-                                              RelativeSource={RelativeSource AncestorType=Window}}"
-                                              CommandParameter="{Binding}"/>
+                                    <Border.InputBindings>
+                                        <MouseBinding
+                                            Command="{Binding DataContext.ItemDoubleClickCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"
                                             MouseAction="LeftClick" />
-
                                     </Border.InputBindings>
                                 </Border>
                             </DataTemplate>
-
                         </ItemsControl.ItemTemplate>
-
                     </ItemsControl>
-
                 </ScrollViewer>
             </Grid>
-
-
         </Border>
-</Window>
+    </DockPanel>
 </Window>
