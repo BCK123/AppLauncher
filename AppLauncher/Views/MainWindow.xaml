@@ -98,6 +98,10 @@
             DragOver="Border_DragOver"
             Drop="Border_Drop">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="64*" />
+                    <ColumnDefinition Width="3*" />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <!--  分类按钮  -->
@@ -107,10 +111,10 @@
                 <!--  ===== 分类按钮区 =====  -->
                 <!--  ===== 分类按钮区（数据绑定） =====  -->
                 <ItemsControl
-                    Grid.Row="0"
+                    Grid.ColumnSpan="2"
                     Height="36"
                     Margin="8,0,8,0"
-                    VerticalAlignment="Top"
+                    VerticalAlignment="Center"
                     ItemsSource="{Binding Categories}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -124,7 +128,6 @@
                                 Padding="10,4"
                                 controls:BackgroundSwitchElement.MouseDownBackground="#BDBDBD"
                                 controls:BackgroundSwitchElement.MouseHoverBackground="#D2D2D2"
-                                Command="{Binding AddCategoryCommand}"
                                 Content="{Binding Name}"
                                 ContextMenuService.IsEnabled="True">
                                 <Button.ContextMenu>
@@ -138,7 +141,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <!--  ===== 图标区 =====  -->
-                <ScrollViewer Grid.Row="1">
+                <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
                     <ItemsControl
                         ItemsSource="{Binding ShortcutsView}"
                         ScrollViewer.IsDeferredScrollingEnabled="True"

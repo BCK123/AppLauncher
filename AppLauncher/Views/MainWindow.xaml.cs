@@ -30,12 +30,17 @@ namespace AppLauncher.Views
         private MainWindowViewModel Vm => (MainWindowViewModel)DataContext;
 
         private readonly IContainerProvider _container;
-        public MainWindow(IContainerProvider container, CategoryService categoryService)
+        private readonly SettingsService _settingsService;
+        private readonly ShortcutStore _shortcutStore;
+        public MainWindow(IContainerProvider container, CategoryService categoryService, SettingsService settingsService, ShortcutStore shortcutStore)
         {
+            _settingsService = settingsService;
             _categoryService = categoryService;
             _container = container;
+            _shortcutStore = shortcutStore;
 
             InitializeComponent();
+           
         }
 
         private void Border_DragOver(object sender, DragEventArgs e)
@@ -81,7 +86,7 @@ namespace AppLauncher.Views
         // BtnSettings_Click 点击跳转到SettingsWindow.xaml界面
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
         {
-            var settingsWindow = new SettingsWindow();
+            var settingsWindow = new SettingsWindow(_settingsService);
             settingsWindow.ShowDialog();
         }
 
@@ -149,7 +154,7 @@ namespace AppLauncher.Views
             }
 
             // 修改名称
-            ShortcutStore.Instance.Update(oldName, input);
+             _shortcutStore.Update(oldName, input);
 
             // 修改名称（UI 自动刷新）
             category.Name = input;

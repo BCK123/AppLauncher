@@ -4,18 +4,16 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Documents;
 using Accessibility;
+using AppLauncher.Events;
 using AppLauncher.Models;
+using Prism.Events;
 
 namespace AppLauncher.Services
 {
-    public class SettingsService
+    public class SettingsService  
     {
-        private static readonly Lazy<SettingsService> _lazy = new(() => new SettingsService());
-
-        private  readonly CategoryService _categoryService;
-
-        public static SettingsService Instance => _lazy.Value;
-
+    
+        
         private readonly string _cfgDir;
         private readonly string _cfgFile;
         private JsonSerializerOptions _jsonOptions;
@@ -23,8 +21,11 @@ namespace AppLauncher.Services
         public AppSettings Settings { get; private set; }
         string oldPath = "";
 
-        private SettingsService()
+        // 定义发布事件 只进行监听 不相互依赖
+        private readonly IEventAggregator _eventAggregator;
+        public SettingsService(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
             _cfgDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AppLauncher");
             Directory.CreateDirectory(_cfgDir);
             _cfgFile = Path.Combine(_cfgDir, "appsettings.json");
@@ -112,7 +113,10 @@ namespace AppLauncher.Services
                 }
                 Load();
 
-             _categoryService.CatrgoryOnSetting();
+             //_categoryService.CatrgoryOnSetting();
+             // 发布事件 不再通过service调用
+            _eventAggregator.GetEvent<SettingsChangedEvent>().Publish();
+
                  return "yes";
             }
             catch (Exception ex)

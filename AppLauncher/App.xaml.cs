@@ -27,6 +27,7 @@ namespace AppLauncher
         {
             containerRegistry.RegisterSingleton<CategoryService, CategoryService>();
             containerRegistry.RegisterSingleton<ShortcutStore, ShortcutStore>();
+            containerRegistry.RegisterSingleton<SettingsService,SettingsService>();
             containerRegistry.RegisterSingleton<MainWindowViewModel>();
 
             // 注册界面

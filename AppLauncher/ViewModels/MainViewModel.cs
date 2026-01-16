@@ -22,7 +22,7 @@ namespace AppLauncher.ViewModels
     //Prism 默认 只认识MainWindowViewModel 这个名字。
     public class MainWindowViewModel :  BindableBase
     {
-        private readonly ShortcutStore _store = new ShortcutStore();
+        private readonly ShortcutStore _store;
         public ObservableCollection<ShortcutItem> Shortcuts { get; } = new ObservableCollection<ShortcutItem>();
 
         public ICommand ItemDoubleClickCommand { get; }
@@ -38,9 +38,13 @@ namespace AppLauncher.ViewModels
         public ICommand OpenSettingsCommand { get; }
 
 
+
         private string _currentCategory = "全部";
 
         private readonly CategoryService _categoryService;
+
+        private readonly SettingsWindow _settingsWindow;
+        private readonly SettingsService _settingsService;
         public string CurrentCategory
         {
             get => _currentCategory;
@@ -66,10 +70,15 @@ namespace AppLauncher.ViewModels
 
     
 
-        public MainWindowViewModel(CategoryService categoryService)
+        public MainWindowViewModel(CategoryService categoryService,ShortcutStore shortcutStore,SettingsWindow settingsWindow,SettingsService settingsService)
+
+
         {
+            _settingsService = settingsService;
             Monitor = new SystemMonitorService();
            _categoryService = categoryService;
+            _store = shortcutStore;
+            _settingsWindow = settingsWindow;
             LoadModel();
 
             // ⭐ 新增分类
@@ -200,7 +209,7 @@ namespace AppLauncher.ViewModels
 
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
         {
-            var settingsWindow = new SettingsWindow();
+            var settingsWindow = new SettingsWindow(_settingsService);
             settingsWindow.ShowDialog();
         }
         private void ExecuteItem(ShortcutItem? item)

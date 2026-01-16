@@ -14,13 +14,14 @@ namespace AppLauncher.Services
     public class ShortcutStore
     {
         // 替换原有单例代码，保证全局只有一个实例
-        private static readonly ShortcutStore _instance = new ShortcutStore(); // 饿汉式，启动就创建
-        public static ShortcutStore Instance => _instance; // 只读，无法被重新赋值
+        private readonly SettingsService _settingsService;
         private readonly string _file;
         public ObservableCollection<ShortcutItem> Shortcuts { get; } = new ObservableCollection<ShortcutItem>();
-        public ShortcutStore()
+        public ShortcutStore(SettingsService settingsService)
         {
-            _file = SettingsService.Instance.GetShortcutsFilePath();
+            _settingsService = settingsService;
+
+            _file = _settingsService.GetShortcutsFilePath();
           
            Load();
            

@@ -1,5 +1,7 @@
-﻿using AppLauncher.Models;
+﻿using AppLauncher.Events;
+using AppLauncher.Models;
 using HandyControl.Controls;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +24,7 @@ namespace AppLauncher.Services
 
         public ObservableCollection<CategoryItem> Categories { get; }
 
-        public CategoryService(SettingsService settingsService)
+        public CategoryService(SettingsService settingsService,IEventAggregator eventAggregator)
         {
             _settingsService = settingsService;
             _filePath = _settingsService.GetCategoryFilePath();
@@ -31,6 +33,9 @@ namespace AppLauncher.Services
             Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
 
             Categories = Load();
+
+            
+            eventAggregator.GetEvent<SettingsChangedEvent>().Subscribe(OnSettingsChanged);
 
             
         }
@@ -136,7 +141,7 @@ namespace AppLauncher.Services
             }
         }
 
-        public void CatrgoryOnSetting()
+        public void OnSettingsChanged()
         {
             _filePath = _settingsService.GetCategoryFilePath();
         }

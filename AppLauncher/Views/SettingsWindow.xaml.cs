@@ -19,10 +19,13 @@ namespace AppLauncher.Views
 {
     public partial class SettingsWindow : Window
     {
-        public SettingsWindow()
+
+        private readonly SettingsService _settingsService;
+        public SettingsWindow(SettingsService settingsService)
         {
+            _settingsService = settingsService;
             InitializeComponent();
-            var current = SettingsService.Instance.Settings.JsonStoreDirectory;
+            var current = _settingsService.Settings.JsonStoreDirectory;
             TxtDir.Text = current ?? string.Empty;
         }
 
@@ -44,7 +47,7 @@ namespace AppLauncher.Views
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             var newDir = string.IsNullOrWhiteSpace(TxtDir.Text) ? null : TxtDir.Text.Trim();    
-            string message = SettingsService.Instance.SetJsonStoreDirectory(newDir);
+            string message =  _settingsService.SetJsonStoreDirectory(newDir);
             if (!message.Equals("yes"))
             {
                 System.Windows.MessageBox.Show(message);
