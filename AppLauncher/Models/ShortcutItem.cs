@@ -31,7 +31,7 @@ namespace AppLauncher.Models
             }
         }
 
-        // 3. 其他普通属性（保留，若后续需要修改这些属性并刷新UI，也按此格式改）
+        // 3. 其他普通属性（保留，若后续需要修改这些属性并刷新UI，也按此格式改）/
         public string TargetPath { get; set; } = "";
         public string? Arguments { get; set; }
         public string? IconPath { get; set; }

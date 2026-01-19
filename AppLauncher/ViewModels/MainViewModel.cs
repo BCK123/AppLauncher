@@ -1,5 +1,6 @@
 ﻿using AppLauncher.Models;
 using AppLauncher.Services;
+using AppLauncher.Services.Log;
 using AppLauncher.Utils;
 using AppLauncher.Views;
 using Prism.Commands;
@@ -45,6 +46,7 @@ namespace AppLauncher.ViewModels
 
         private readonly SettingsWindow _settingsWindow;
         private readonly SettingsService _settingsService;
+        private readonly ILoggerService _logger;
         public string CurrentCategory
         {
             get => _currentCategory;
@@ -70,10 +72,9 @@ namespace AppLauncher.ViewModels
 
     
 
-        public MainWindowViewModel(CategoryService categoryService,ShortcutStore shortcutStore,SettingsWindow settingsWindow,SettingsService settingsService)
-
-
+        public MainWindowViewModel(CategoryService categoryService,ShortcutStore shortcutStore,SettingsWindow settingsWindow,SettingsService settingsService,ILoggerService loggerService)
         {
+            _logger = loggerService;
             _settingsService = settingsService;
             Monitor = new SystemMonitorService();
            _categoryService = categoryService;
@@ -130,7 +131,7 @@ namespace AppLauncher.ViewModels
 
 
 
-            OpenSettingsCommand = new RelayCommand(p => BtnSettings_Click(null, null));
+            OpenSettingsCommand = new RelayCommand(p => BtnSettings_Click());
             // 数据对应的事件 
             Categories = _categoryService.Categories;
 
@@ -207,7 +208,7 @@ namespace AppLauncher.ViewModels
             _store.Save(Shortcuts);
         }
 
-        private void BtnSettings_Click(object sender, RoutedEventArgs e)
+        private void BtnSettings_Click()
         {
             var settingsWindow = new SettingsWindow(_settingsService);
             settingsWindow.ShowDialog();
@@ -260,6 +261,8 @@ namespace AppLauncher.ViewModels
         public void DeleteCategory(CategoryItem category)
         {
             if (category == null) return;
+            
+            _logger.Info($"删除分类：{category.Name}");
 
             // 1️⃣ 删分类（持久化）
             _categoryService.Delete(category);

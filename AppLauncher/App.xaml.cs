@@ -1,4 +1,5 @@
 ﻿using AppLauncher.Services;
+using AppLauncher.Services.Log;
 using AppLauncher.ViewModels;
 using AppLauncher.Views;
 using Prism.DryIoc;
@@ -32,6 +33,10 @@ namespace AppLauncher
 
             // 注册界面
             containerRegistry.Register<addCategory>(); // 👈 关键
+
+            // 注册日志
+            containerRegistry.RegisterSingleton<ILoggerService, SerilogLoggerService>();
+
         }
 
     }

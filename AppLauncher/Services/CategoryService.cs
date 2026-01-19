@@ -71,8 +71,8 @@ namespace AppLauncher.Services
             if (category.Name == "全部")
                 throw new InvalidOperationException("不能删除默认分类");
             // 弹窗二次确认
-            var confirmResult = HandyControl.Controls.MessageBox.Show($"确定要删除分类「{category.Name}」吗？",
-                "确认删除", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            //var confirmResult = HandyControl.Controls.MessageBox.Show($"确定要删除分类「{category.Name}」吗？",
+            //    "确认删除", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             Categories.Remove(category);
             Save();
