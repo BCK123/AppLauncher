@@ -1,0 +1,144 @@
+﻿<UserControl
+    x:Class="AppLauncher.Views.ShortcutView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:HandyControl.Controls;assembly=HandyControl"
+    xmlns:converters="clr-namespace:AppLauncher.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AppLauncher.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:vm="clr-namespace:AppLauncher.ViewModels"
+    Width="800"
+    Height="450"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:IconPathToImageConverter x:Key="IconPathToImageConverter" />
+            <converters:VisibilityConverter x:Key="VisibilityConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="\Resources\Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border
+        Margin="8"
+        AllowDrop="True"
+        Background="WhiteSmoke"
+        BorderBrush="Gray"
+        BorderThickness="1"
+        CornerRadius="4"
+        DragOver="Border_DragOver"
+        Drop="Border_Drop">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="64*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <!--  分类按钮  -->
+                <RowDefinition Height="*" />
+                <!--  图标区域  -->
+            </Grid.RowDefinitions>
+            <!--  ===== 分类按钮区 =====  -->
+            <!--  ===== 分类按钮区（数据绑定） =====  -->
+            <ItemsControl
+                Grid.ColumnSpan="2"
+                Height="36"
+                Margin="8,0,8,0"
+                VerticalAlignment="Center"
+                ItemsSource="{Binding Categories}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <!--
+                            ===== RelativeSource={RelativeSource AncestorType=ItemsControl} 通过这个 将•	ItemsControl 的 DataContext 是 ShortcutViewModel，而 ItemTemplate 的 DataContext 是 CategoryItem。
+                            •	通过 RelativeSource AncestorType=ItemsControl，你能准确拿到 ShortcutViewModel，再访问其命令属性，绑定就能生效。 =====
+                        -->
+                        <Button
+                            Margin="4"
+                            Padding="10,4"
+                            controls:BackgroundSwitchElement.MouseDownBackground="#BDBDBD"
+                            controls:BackgroundSwitchElement.MouseHoverBackground="#D2D2D2"
+                            Command="{Binding DataContext.SelectCategoryCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            CommandParameter="{Binding}"
+                            Content="{Binding Name}"
+                            ContextMenuService.IsEnabled="True">
+                            <Button.ContextMenu>
+                                <ContextMenu PlacementTarget="{Binding ElementName=testBtn}" Visibility="{Binding PlacementTarget.Content, RelativeSource={RelativeSource Self}, Converter={StaticResource VisibilityConverter}}">
+                                    <MenuItem Click="RenameCategory_Click" Header="重命名" />
+                                    <MenuItem Click="DeleteCategory_Click" Header="删除" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <!--  ===== 图标区 =====  -->
+            <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
+                <ItemsControl
+                    ItemsSource="{Binding ShortcutsView}"
+                    ScrollViewer.IsDeferredScrollingEnabled="True"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Width="96"
+                                Margin="6"
+                                Padding="8"
+                                CornerRadius="8"
+                                Cursor="Hand"
+                                Style="{StaticResource BorderStyle}">
+                                <!--  修复右键菜单绑定  加上这一段实现右击事件  -->
+                                <Border.ContextMenu>
+                                    <ContextMenu DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
+
+                                        <MenuItem
+                                            Command="{Binding DataContext.RenameCategoryCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                            Header="重命名" />
+                                        <MenuItem
+                                            Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                            Header="删除" />
+                                    </ContextMenu>
+                                </Border.ContextMenu>
+                                <StackPanel HorizontalAlignment="Center">
+                                    <Image
+                                        Width="48"
+                                        Height="48"
+                                        Source="{Binding IconPath, Converter={StaticResource IconPathToImageConverter}}" />
+                                    <TextBlock
+                                        MaxWidth="80"
+                                        FontSize="12"
+                                        Text="{Binding DisplayName}"
+                                        TextAlignment="Center"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                                <Border.InputBindings>
+                                    <MouseBinding
+                                        Command="{Binding ItemDoubleClickCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        MouseAction="LeftClick" />
+                                </Border.InputBindings>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

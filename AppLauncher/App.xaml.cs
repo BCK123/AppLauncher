@@ -4,6 +4,7 @@ using AppLauncher.ViewModels;
 using AppLauncher.Views;
 using Prism.DryIoc;
 using Prism.Ioc;
+using Prism.Navigation.Regions;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -19,6 +20,13 @@ namespace AppLauncher
     /// </summary>
     public partial class App : PrismApplication
     {
+
+        public void OnInitialized(IContainerProvider containerProvider)
+        {
+            // 方式二 加载默认界面 好像不管用
+            //var regionManager = containerProvider.Resolve<IRegionManager>();
+            //regionManager.RegisterViewWithRegion("MainRegion", typeof(ShortcutView));
+        }
         protected override Window CreateShell()
         {
             return Container.Resolve<MainWindow>();
@@ -33,6 +41,8 @@ namespace AppLauncher
 
             // 注册界面
             containerRegistry.Register<addCategory>(); // 👈 关键
+            containerRegistry.RegisterForNavigation<ShortcutView>();
+            //containerRegistry.RegisterForNavigation<VisionView, VisionViewModel>();
 
             // 注册日志
             containerRegistry.RegisterSingleton<ILoggerService, SerilogLoggerService>();
