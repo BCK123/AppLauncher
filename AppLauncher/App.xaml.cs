@@ -42,7 +42,7 @@ namespace AppLauncher
             // 注册界面
             containerRegistry.Register<addCategory>(); // 👈 关键
             containerRegistry.RegisterForNavigation<ShortcutView>();
-            //containerRegistry.RegisterForNavigation<VisionView, VisionViewModel>();
+            containerRegistry.RegisterForNavigation<Vision>();
 
             // 注册日志
             containerRegistry.RegisterSingleton<ILoggerService, SerilogLoggerService>();
