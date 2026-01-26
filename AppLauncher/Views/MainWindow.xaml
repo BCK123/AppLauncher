@@ -9,7 +9,7 @@
     Width="420"
     Height="520"
     MinWidth="360"
-    MinHeight="480"
+    MinHeight="580"
     prism:ViewModelLocator.AutoWireViewModel="True">
 
     <Window.Resources>
@@ -90,7 +90,12 @@
 
         <!--  中间主内容区：自动填充  -->
         <Grid Background="#F5F5F5">
-            <ContentControl prism:RegionManager.RegionName="MainRegion" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120*" />
+                <ColumnDefinition Width="41*" />
+                <ColumnDefinition Width="49*" />
+            </Grid.ColumnDefinitions>
+            <ContentControl Grid.ColumnSpan="3" prism:RegionManager.RegionName="MainRegion" />
         </Grid>
 
     </DockPanel>

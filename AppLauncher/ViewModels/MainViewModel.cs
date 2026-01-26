@@ -7,15 +7,7 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
 using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
@@ -47,8 +39,22 @@ namespace AppLauncher.ViewModels
 
             OpenSettingsCommand = new RelayCommand(p => BtnSettings_Click());
 
+            // 正常尺寸
             ShowShortcutCommand = new DelegateCommand(() =>
-        _regionManager.RequestNavigate("MainRegion", nameof(ShortcutView)));
+            {
+                _regionManager.RequestNavigate("MainRegion", nameof(ShortcutView));
+
+                Application.Current.MainWindow.WindowState = WindowState.Normal;
+            });
+            // 最大化窗口尺寸  
+            ShowVisionCommand = new DelegateCommand(() =>
+            {
+                _regionManager.RequestNavigate("MainRegion", nameof(VisionView));
+
+               //Application.Current.MainWindow.WindowState = WindowState.Maximized;
+            });
+
+
 
             // 监控
             // UI 就绪后再启动

@@ -16,7 +16,8 @@ namespace AppLauncher.Models
         [JsonPropertyName("categoryFileName")]
         public string CategoryFileName { get; set; } = "category.json";
 
-      
+        [JsonPropertyName("modelPath")]
+        public string modelpath { get; set; }
 
         // 辅助属性：完整文件路径（非序列化）
         [JsonIgnore]

@@ -28,12 +28,12 @@ namespace AppLauncher.Views
     public partial class MainWindow : Window
     {
         private readonly CategoryService _categoryService;
-        private ShortcutViewModel Vm => (ShortcutViewModel)DataContext;
 
         private readonly IContainerProvider _container;
         private readonly SettingsService _settingsService;
         private readonly ShortcutStore _shortcutStore;
         private readonly IRegionManager _regionManager;
+
 
         public MainWindow(IRegionManager regionManager,IContainerProvider container, CategoryService categoryService, SettingsService settingsService, ShortcutStore shortcutStore)
         {
