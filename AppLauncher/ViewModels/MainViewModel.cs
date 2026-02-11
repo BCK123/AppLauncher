@@ -41,20 +41,7 @@ namespace AppLauncher.ViewModels
 
             // 正常尺寸
             ShowShortcutCommand = new DelegateCommand(() =>
-            {
-                _regionManager.RequestNavigate("MainRegion", nameof(ShortcutView));
-
-                Application.Current.MainWindow.WindowState = WindowState.Normal;
-            });
-            // 最大化窗口尺寸  
-            ShowVisionCommand = new DelegateCommand(() =>
-            {
-                _regionManager.RequestNavigate("MainRegion", nameof(VisionView));
-
-               //Application.Current.MainWindow.WindowState = WindowState.Maximized;
-            });
-
-
+        _regionManager.RequestNavigate("MainRegion", nameof(ShortcutView)));
 
             // 监控
             // UI 就绪后再启动
