@@ -43,6 +43,10 @@ namespace AppLauncher.ViewModels
             ShowShortcutCommand = new DelegateCommand(() =>
         _regionManager.RequestNavigate("MainRegion", nameof(ShortcutView)));
 
+            // 正常尺寸
+            ShowVisionCommand = new DelegateCommand(() =>
+        _regionManager.RequestNavigate("MainRegion", nameof(VisionView)));
+
             // 监控
             // UI 就绪后再启动
             System.Windows.Application.Current.Dispatcher.BeginInvoke(
