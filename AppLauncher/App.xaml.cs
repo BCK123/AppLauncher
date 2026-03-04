@@ -1,20 +1,11 @@
 ﻿using AppLauncher.Services;
 using AppLauncher.Services.Log;
-using AppLauncher.Utils;
 using AppLauncher.ViewModels;
 using AppLauncher.Views;
 using DryIoc;
-using Prism.Container.DryIoc;
 using Prism.DryIoc;
 using Prism.Ioc;
-using Prism.Navigation.Regions;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace AppLauncher

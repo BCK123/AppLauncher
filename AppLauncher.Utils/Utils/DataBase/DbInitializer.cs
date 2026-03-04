@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AppLauncher.Utils.DataBase;
+using Dapper;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace AppLauncher.Utils.DataBase
+namespace AppLauncher.Utils.Utils.DataBase
 {
   
 

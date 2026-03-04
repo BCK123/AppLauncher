@@ -1,21 +1,21 @@
 ﻿
+using AppLauncher.Utils.Interface;
+using HandyControl.Controls;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenCvSharp;
-using AppLauncher.Utils.Interface;
-using HandyControl.Controls;
 
 
-namespace AppLauncher.Utils
+namespace AppLauncher.Utils.Utils
 {
     /// <summary>
     /// YOLO ONNX 目标检测器类
     /// 实现完整的图像预处理、模型推理、后处理流程
     /// </summary>
-    public class YoloOnnxDetector : IDisposable 
+    public class YoloOnnxDetector : IDisposable
     {
         private InferenceSession _session;        // ONNX Runtime 推理会话实例
         private readonly Size _modelSize = new Size(640, 640); // YOLOv8标准输入尺寸
@@ -29,10 +29,10 @@ namespace AppLauncher.Utils
         /// <param name="modelPath">ONNX模型文件路径（.onnx文件）</param>
         public YoloOnnxDetector(string modelPath)
         {
-            if(modelPath == "" || modelPath == null)
+            if (modelPath == "" || modelPath == null)
             {
                 MessageBox.Show("未找到模型文件，请检查路径是否正确！");
-                
+
             }
             else
             {
@@ -48,7 +48,7 @@ namespace AppLauncher.Utils
                     _Names = ParseNames(metadata["names"]);
                 }
             }
-               
+
         }
         private Dictionary<int, string> ParseNames(string names)
         {
