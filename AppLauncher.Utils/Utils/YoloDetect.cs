@@ -74,7 +74,7 @@ namespace AppLauncher.Utils.Utils
         public List<Prediction> Predict(Mat image)
         {
             // 步骤1：图像预处理 - 将原始图像转换为模型输入格式
-            var input = PreprocessImage(image);
+            var (input, letterbox) = PreprocessImage(image);
 
             // 步骤2：准备模型输入 - 创建ONNX Runtime可识别的输入对象
             var inputs = new List<NamedOnnxValue> {
@@ -85,52 +85,71 @@ namespace AppLauncher.Utils.Utils
             using (IDisposableReadOnlyCollection<DisposableNamedOnnxValue> results = _session.Run(inputs))
             {
                 // 步骤4：后处理 - 解析模型输出，应用过滤和优化
-                return Postprocess(results, image);
+                return Postprocess(results, image, letterbox);
             }
         }
 
+
+        public class LetterboxInfo
+        {
+            public float Scale;
+            public int PadLeft;
+            public int PadTop;
+        }
         /// <summary>
         /// 图像预处理函数
-        /// 功能：将原始BGR图像转换为YOLOv8模型期望的输入格式
-        /// 处理流程：
-        /// 1. 调整图像尺寸到640x640（保持长宽比可能会丢失，实际应用可改进）
-        /// 2. 转换色彩空间BGR→RGB（模型训练通常使用RGB格式）
-        /// 3. 像素值归一化到[0,1]范围（提高模型数值稳定性）
-        /// 4. 转换为NCHW格式张量[1,3,640,640]（模型标准输入格式）
-        /// </summary>
-        /// <param name="image">原始OpenCV图像（BGR格式，任意尺寸）</param>
-        /// <returns>预处理后的4维张量，可直接输入ONNX模型</returns>
-        private DenseTensor<float> PreprocessImage(Mat image)
+        /// 功能：将原始BGR图像转换为YOLOv8模型期望的输入格式 
+        private (DenseTensor<float>, LetterboxInfo) PreprocessImage(Mat image)
         {
-            // 步骤1：调整图像尺寸到模型输入大小（640x640）
-            // 注意：此处直接缩放可能失真，生产环境建议保持宽高比
+            int targetSize = 640; // 模型输入尺寸
+            int w = image.Width;
+            int h = image.Height;
+
+            float scale = Math.Min((float)targetSize / w, (float)targetSize / h);
+            int newW = (int)(w * scale);
+            int newH = (int)(h * scale);
+
+            // 调整大小
             Mat resized = new Mat();
-            Cv2.Resize(image, resized, _modelSize);
+            Cv2.Resize(image, resized, new Size(newW, newH));
 
-            // 步骤2：转换色彩空间 BGR → RGB
-            // OpenCV默认BGR格式，但大多数模型训练使用RGB格式
-            Mat rgb = new Mat();
-            Cv2.CvtColor(resized, rgb, ColorConversionCodes.BGR2RGB);
+            // 填充到 targetSize x targetSize
+            int padW = targetSize - newW;
+            int padH = targetSize - newH;
+            int top = padH / 2;
+            int bottom = padH - top;
+            int left = padW / 2;
+            int right = padW - left;
 
-            // 步骤3：创建4维张量 [batch_size=1, channels=3, height=640, width=640]
-            var tensor = new DenseTensor<float>(new[] { 1, 3, _modelSize.Height, _modelSize.Width });
+            Mat padded = new Mat();
+            Cv2.CopyMakeBorder(resized, padded, top, bottom, left, right, BorderTypes.Constant, Scalar.Black);
 
-            // 步骤4：逐像素处理，填充张量数据
-            // 使用嵌套循环确保数据布局正确，避免内存拷贝错误
-            for (int y = 0; y < rgb.Height; y++)
+            // BGR -> RGB
+            Cv2.CvtColor(padded, padded, ColorConversionCodes.BGR2RGB);
+
+            // 创建张量
+            var tensor = new DenseTensor<float>(new[] { 1, 3, targetSize, targetSize });
+
+            for (int y = 0; y < targetSize; y++)
             {
-                for (int x = 0; x < rgb.Width; x++)
+                for (int x = 0; x < targetSize; x++)
                 {
-                    // 获取RGB像素值
-                    Vec3b pixel = rgb.At<Vec3b>(y, x);
-                    // 归一化到[0,1]并按照NCHW格式填充
-                    tensor[0, 0, y, x] = pixel[0] / 255.0f; // R通道
-                    tensor[0, 1, y, x] = pixel[1] / 255.0f; // G通道  
-                    tensor[0, 2, y, x] = pixel[2] / 255.0f; // B通道
+                    Vec3b pixel = padded.At<Vec3b>(y, x);
+                    tensor[0, 0, y, x] = pixel[0] / 255.0f;
+                    tensor[0, 1, y, x] = pixel[1] / 255.0f;
+                    tensor[0, 2, y, x] = pixel[2] / 255.0f;
                 }
             }
-            return tensor;
+
+            return (tensor, new LetterboxInfo
+            {
+                Scale = scale,
+                PadLeft = left,
+                PadTop = top
+            });
         }
+
+
 
         /// <summary>
         /// 后处理函数 - 解析模型原始输出并提取有意义信息
@@ -145,7 +164,9 @@ namespace AppLauncher.Utils.Utils
         /// <param name="results">ONNX Runtime推理结果集合</param>
         /// <param name="originalImage">原始图像（用于坐标映射）</param>
         /// <returns>结构化检测结果列表</returns>
-        private List<Prediction> Postprocess(IDisposableReadOnlyCollection<DisposableNamedOnnxValue> results, Mat originalImage)
+        /// 
+        private List<Prediction> Postprocess(IDisposableReadOnlyCollection<DisposableNamedOnnxValue> results,
+                          Mat originalImage, LetterboxInfo letterbox)
         {
             var predictions = new List<Prediction>();
             float confidenceThreshold = 0.5f;  // 置信度阈值，过滤不可靠检测
@@ -170,10 +191,10 @@ namespace AppLauncher.Utils.Utils
 
                         // 读取边界框坐标
                         float x1 = tensorSpan[offset + 0], y1 = tensorSpan[offset + 1], x2 = tensorSpan[offset + 2], y2 = tensorSpan[offset + 3];
-                        x1 = x1 * originalImage.Width / _modelSize.Width;
-                        x2 = x2 * originalImage.Width / _modelSize.Width;
-                        y1 = y1 * originalImage.Height / _modelSize.Height;
-                        y2 = y2 * originalImage.Height / _modelSize.Height;
+                        x1 = (x1 - letterbox.PadLeft) / letterbox.Scale;
+                        y1 = (y1 - letterbox.PadTop) / letterbox.Scale;
+                        x2 = (x2 - letterbox.PadLeft) / letterbox.Scale;
+                        y2 = (y2 - letterbox.PadTop) / letterbox.Scale;
                         // 步骤2.5：确保坐标在图像边界内（防止越界错误）
                         x1 = Math.Max(0, Math.Min(x1, originalImage.Width));
                         y1 = Math.Max(0, Math.Min(y1, originalImage.Height));
@@ -230,10 +251,10 @@ namespace AppLauncher.Utils.Utils
 
                         // 步骤2.4：将归一化坐标转换为原始图像像素坐标
                         // 从中心点格式转换为左上角坐标格式
-                        float x1 = (cx - w / 2) * originalImage.Width / _modelSize.Width;
-                        float y1 = (cy - h / 2) * originalImage.Height / _modelSize.Height;
-                        float x2 = (cx + w / 2) * originalImage.Width / _modelSize.Width;
-                        float y2 = (cy + h / 2) * originalImage.Height / _modelSize.Height;
+                        float x1 = (cx - w / 2 - letterbox.PadLeft) / letterbox.Scale;
+                        float y1 = (cy - h / 2 - letterbox.PadTop) / letterbox.Scale;
+                        float x2 = (cx + w / 2 - letterbox.PadLeft) / letterbox.Scale;
+                        float y2 = (cy + h / 2 - letterbox.PadTop) / letterbox.Scale;
 
                         // 步骤2.5：确保坐标在图像边界内（防止越界错误）
                         x1 = Math.Max(0, Math.Min(x1, originalImage.Width));
@@ -364,5 +385,9 @@ namespace AppLauncher.Utils.Utils
         /// 对应COCO数据集或其他自定义数据集的类别
         /// </summary>
         public string Label { get; set; }
+
+
+
+       
     }
 }

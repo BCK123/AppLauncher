@@ -292,7 +292,7 @@ namespace AppLauncher.ViewModels
                     // 推理
                     List<Prediction> predictions = yolo.Predict(image);
 
-                    // 画框
+                    // 画框 输出检测项
                     foreach (var pred in predictions)
                     {
                         Cv2.Rectangle(image, pred.Box, Scalar.Red, 10);
