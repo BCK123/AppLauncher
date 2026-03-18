@@ -93,9 +93,16 @@
                 <TextBlock
                     Grid.Row="4"
                     Grid.Column="0"
-                    Grid.ColumnSpan="4  "
+                    Grid.ColumnSpan="2"
                     VerticalAlignment="Center"
-                    Text="{Binding ProcessTime, StringFormat=耗时：{0} ms}" />
+                    Text="{Binding ProcessTime, StringFormat=耗时{0}ms}" />
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="3"
+                    Padding="30,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding ProcessResult, StringFormat=结果：{0}}" />
                 <!--  预览图片【核心修改：灰色背景+等比拉伸】  -->
                 <Border
                     Grid.Row="5"

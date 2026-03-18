@@ -15,6 +15,9 @@ namespace AppLauncher.Utils.Utils.DataBase
     {
         public static void Initialize()
         {
+            // ⭐ 初始化 SQLite（必须最先）
+            SQLitePCL.Batteries.Init();
+
             Directory.CreateDirectory(Path.GetDirectoryName(AppPaths.DbPath)!);
 
             using var conn = new SqliteConnection(

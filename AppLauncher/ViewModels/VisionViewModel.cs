@@ -1,6 +1,6 @@
 ﻿using AppLauncher.Models;
 using AppLauncher.Services;
-using AppLauncher.Services.Log;
+using AppLauncher.Core.Log;
 using AppLauncher.Utils;
 using AppLauncher.Utils.Utils;
 using Microsoft.ML.OnnxRuntime;
@@ -80,6 +80,12 @@ namespace AppLauncher.ViewModels
             set => SetProperty(ref _processTime, value);
         }
 
+        private String _processResult;
+        public String ProcessResult
+        {
+            get => _processResult;
+            set => SetProperty(ref _processResult, value);
+        }
 
         private readonly ILoggerService _logger;
 
@@ -320,6 +326,15 @@ namespace AppLauncher.ViewModels
 
                     // 可选：日志
                     ProcessTime = (DateTime.Now - dt1).TotalMilliseconds;
+
+
+                    ProcessResult = "";
+                    foreach(var i in predictions)
+                    {
+                        // 保留三位小数拼接：Label + ： + 三位小数的置信度
+                        ProcessResult += $"{i.Label}：{i.Confidence:F3}  ";
+                    }
+                  
                     _logger.Info($"共检测出{predictions.Count}个结果，耗时:{ProcessTime}ms") ;
                 }
             }

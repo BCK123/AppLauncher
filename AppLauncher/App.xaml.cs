@@ -1,11 +1,14 @@
 ﻿using AppLauncher.Services;
-using AppLauncher.Services.Log;
+using AppLauncher.Core.Log;
+using AppLauncher.Utils.Utils.DataBase;
+using AppLauncher.Utils.Utils.StartupUtil;
 using AppLauncher.ViewModels;
 using AppLauncher.Views;
 using DryIoc;
 using Prism.DryIoc;
 using Prism.Ioc;
 using System.IO;
+using System.Linq;
 using System.Windows;
 
 namespace AppLauncher
@@ -34,8 +37,7 @@ namespace AppLauncher
             containerRegistry.RegisterSingleton<SettingsService,SettingsService>();
             containerRegistry.RegisterSingleton<MainWindowViewModel>();
 
-          
-
+         
             // 注册界面
             containerRegistry.Register<addCategory>(); // 👈 关键
             containerRegistry.RegisterForNavigation<ShortcutView>();
@@ -47,16 +49,28 @@ namespace AppLauncher
         }
 
 
-        // 在App.xaml.cs的OnExit方法中添加
-        protected override void OnExit(ExitEventArgs e)
+        // 应用启动时执行
+        protected override void OnInitialized()
         {
-            // 清理YOLO检测的临时图片
-            var tempFiles = Directory.GetFiles(Path.GetTempPath(), "yolo_detect_*.png");
-            foreach (var file in tempFiles)
+            base.OnInitialized();
+
+            var logger = Container.Resolve<ILoggerService>();
+            try
             {
-                try { File.Delete(file); } catch { }
+                logger.Info("正在清理临时文件夹中的图片缓存...");
+                // 清理缓存
+                Clean.DeleteImageCache();
             }
-            base.OnExit(e);
+            catch
+            {
+                logger.Warn("处理图片缓存出现异常！");
+            }
+
+           
+            // 初始化数据库
+            DbInitializer.Initialize();
         }
+
+     
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AppLauncher.Models;
 using AppLauncher.Services;
-using AppLauncher.Services.Log;
+using AppLauncher.Core.Log;
 using AppLauncher.Utils;
 using AppLauncher.Views;
 using Prism.Ioc;

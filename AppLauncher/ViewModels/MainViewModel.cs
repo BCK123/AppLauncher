@@ -1,6 +1,6 @@
 ﻿using AppLauncher.Models;
 using AppLauncher.Services;
-using AppLauncher.Services.Log;
+using AppLauncher.Core.Log;
 using AppLauncher.Utils;
 using AppLauncher.Views;
 using Prism.Commands;
@@ -51,7 +51,7 @@ namespace AppLauncher.ViewModels
 
 
             // 删除缓存
-            DeleteImageCache();
+           // DeleteImageCache();
             // 监控
             // UI 就绪后再启动
             System.Windows.Application.Current.Dispatcher.BeginInvoke(
