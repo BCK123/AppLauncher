@@ -30,6 +30,7 @@
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
+
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -60,9 +61,10 @@
                 <Button
                     Grid.Row="2"
                     Grid.Column="2"
-                    Margin="6,0"
+                    Margin="6,5"
                     Command="{Binding BrowseDatasetCommand}"
                     Content="浏览" />
+
 
 
                 <TextBlock
@@ -74,14 +76,26 @@
                 <Button
                     Grid.Row="3"
                     Grid.Column="1"
-                    Margin="6,0"
+                    Margin="6,0,50,0"
                     Command="{Binding BrowseImageCommand}"
                     Content="浏览" />
+                <RadioButton
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="80,0,0,0"
+                    Content="gpu"
+                    IsChecked="{Binding IsUseGpu, Mode=TwoWay}" />
                 <Button
                     Grid.Row="3"
                     Grid.Column="2"
                     Command="{Binding ProcessImageCommand}"
                     Content="识别" />
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="4  "
+                    VerticalAlignment="Center"
+                    Text="{Binding ProcessTime, StringFormat=耗时：{0} ms}" />
                 <!--  预览图片【核心修改：灰色背景+等比拉伸】  -->
                 <Border
                     Grid.Row="5"

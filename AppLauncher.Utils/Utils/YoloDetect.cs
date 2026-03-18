@@ -27,7 +27,7 @@ namespace AppLauncher.Utils.Utils
         /// 注意：此构造函数会加载整个模型到内存，耗时操作应在程序初始化时执行
         /// </summary>
         /// <param name="modelPath">ONNX模型文件路径（.onnx文件）</param>
-        public YoloOnnxDetector(string modelPath)
+        public YoloOnnxDetector(string modelPath, bool isUseGpu = true)
         {
             if (modelPath == "" || modelPath == null)
             {
@@ -37,7 +37,9 @@ namespace AppLauncher.Utils.Utils
             else
             {
                 // 初始化ONNX Runtime推理会话，加载模型文件
+                        // 初始化ONNX Runtime推理会话，加载模型文件
                 _session = new InferenceSession(modelPath);
+
                 var metadata = _session.ModelMetadata.CustomMetadataMap;
                 if (metadata.ContainsKey("description"))
                 {

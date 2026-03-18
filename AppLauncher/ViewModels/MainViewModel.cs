@@ -7,6 +7,8 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
 using System;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -47,6 +49,9 @@ namespace AppLauncher.ViewModels
             ShowVisionCommand = new DelegateCommand(() =>
         _regionManager.RequestNavigate("MainRegion", nameof(VisionView)));
 
+
+            // 删除缓存
+            DeleteImageCache();
             // 监控
             // UI 就绪后再启动
             System.Windows.Application.Current.Dispatcher.BeginInvoke(
@@ -62,6 +67,21 @@ namespace AppLauncher.ViewModels
         }
 
         public SystemMonitorService Monitor { get; }
+
+        private void DeleteImageCache()
+        {
+            //  删除temp 下图片 包含 baidetect字符的图像
+            try
+            {
+                Directory.EnumerateFiles(Path.GetTempPath())
+                   .Where(f => Path.GetFileName(f).Contains("bai_detect", StringComparison.OrdinalIgnoreCase))
+                   .ToList()
+                   .ForEach(file => { try { File.Delete(file); } catch { } });
+
+            }
+            catch { } 
+        }
+        
     }
 
 }

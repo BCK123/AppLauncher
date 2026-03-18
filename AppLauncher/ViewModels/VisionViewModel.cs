@@ -56,6 +56,15 @@ namespace AppLauncher.ViewModels
 
         public DelegateCommand ProcessImageCommand { get; }
 
+        // 1. GPU开关属性（绑定RadioButton的IsChecked） SetProperty来通知属性变更   
+        private bool _isUseGpu;
+        public bool IsUseGpu
+        {
+            get => _isUseGpu;
+            set => SetProperty(ref _isUseGpu, value);
+
+        }
+
 
         private string _scriptPath;
         public string ScriptPath
@@ -63,6 +72,14 @@ namespace AppLauncher.ViewModels
             get => _scriptPath;
             set => SetProperty(ref _scriptPath, value);
         }
+
+        private Double _processTime;
+        public Double ProcessTime
+        {
+            get => _processTime;
+            set => SetProperty(ref _processTime, value);
+        }
+
 
         private readonly ILoggerService _logger;
 
@@ -81,6 +98,7 @@ namespace AppLauncher.ViewModels
             BrowseImageCommand = new DelegateCommand(OnBrowseImage);
             ProcessImageCommand = new DelegateCommand(OnProcessImage);
 
+            IsUseGpu = false;
             // 初始化 Settings（如果需要加载默认值，可以在这里调用 SettingsService.Load()）
             Settings = new AppSettings();
 
@@ -190,6 +208,8 @@ namespace AppLauncher.ViewModels
 
                     // 3. 核心：等比缩放算法（保证宽高不超380×250，不变形）
                     CalculateScaledSize(originalWidth, originalHeight);
+
+                  
                 }
                 catch (Exception ex)
                 {
@@ -278,18 +298,18 @@ namespace AppLauncher.ViewModels
                             label,
                             new OpenCvSharp.Point(pred.Box.X, pred.Box.Y - 5),
                             HersheyFonts.HersheySimplex,
-                           6,
+                           5,
                             Scalar.Red,
-                           12);
+                           5);
                     }
 
                     // 先删旧的
-                    DeleteLastDetectedImage();
+                    //DeleteLastDetectedImage();
 
                     // ✅ 保存为新图片路径（关键）
                     string detectedPath = Path.Combine(
                         Path.GetTempPath(),
-                        $"detect_{Guid.NewGuid():N}.png");
+                        $"bai_detect_{Guid.NewGuid():N}.png");
 
                     Cv2.ImWrite(detectedPath, image);
 
@@ -299,7 +319,8 @@ namespace AppLauncher.ViewModels
                     ImagePath = detectedPath;
 
                     // 可选：日志
-                    _logger.Info($"共检测出{predictions.Count}个结果，耗时:{(DateTime.Now - dt1).TotalMilliseconds}ms") ;
+                    ProcessTime = (DateTime.Now - dt1).TotalMilliseconds;
+                    _logger.Info($"共检测出{predictions.Count}个结果，耗时:{ProcessTime}ms") ;
                 }
             }
         }
