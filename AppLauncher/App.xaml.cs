@@ -1,5 +1,5 @@
-﻿using AppLauncher.Services;
-using AppLauncher.Core.Log;
+﻿using AppLauncher.Core.Log;
+using AppLauncher.Services;
 using AppLauncher.Utils.Utils.DataBase;
 using AppLauncher.Utils.Utils.StartupUtil;
 using AppLauncher.ViewModels;
@@ -7,6 +7,7 @@ using AppLauncher.Views;
 using DryIoc;
 using Prism.DryIoc;
 using Prism.Ioc;
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -42,6 +43,7 @@ namespace AppLauncher
             containerRegistry.Register<addCategory>(); // 👈 关键
             containerRegistry.RegisterForNavigation<ShortcutView>();
             containerRegistry.RegisterForNavigation<VisionView>();
+            containerRegistry.RegisterForNavigation<SightView>();
 
             // 注册日志
             containerRegistry.RegisterSingleton<ILoggerService, SerilogLoggerService>();
@@ -61,7 +63,7 @@ namespace AppLauncher
                 // 清理缓存
                 Clean.DeleteImageCache();
             }
-            catch
+            catch 
             {
                 logger.Warn("处理图片缓存出现异常！");
             }
@@ -71,6 +73,11 @@ namespace AppLauncher
             DbInitializer.Initialize();
         }
 
-     
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+        }
     }
+
+
 }

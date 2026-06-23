@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppLauncher.Utils", "AppLau
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppLauncher.Core", "AppCore\AppLauncher.Core.csproj", "{C94B6AC4-CDC3-4C60-A472-BEEDC2C32F06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppLauncher.AviFunction", "AppLauncher.AviFunction\AppLauncher.AviFunction.csproj", "{869BEF8E-CD78-43E4-9E0A-D3819B07269A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C94B6AC4-CDC3-4C60-A472-BEEDC2C32F06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C94B6AC4-CDC3-4C60-A472-BEEDC2C32F06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C94B6AC4-CDC3-4C60-A472-BEEDC2C32F06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869BEF8E-CD78-43E4-9E0A-D3819B07269A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869BEF8E-CD78-43E4-9E0A-D3819B07269A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869BEF8E-CD78-43E4-9E0A-D3819B07269A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869BEF8E-CD78-43E4-9E0A-D3819B07269A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

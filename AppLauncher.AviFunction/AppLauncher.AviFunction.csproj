@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HalconDotNet" Version="19.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="新文件夹1\" />
+    <Folder Include="新文件夹\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="halcondotnet">
+      <HintPath>C:\Program Files\MVTec\HALCON-20.11-Steady\bin\dotnet35\halcondotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="hdevenginedotnet">
+      <HintPath>C:\Program Files\MVTec\HALCON-20.11-Steady\bin\dotnet35\hdevenginedotnet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

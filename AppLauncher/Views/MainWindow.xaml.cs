@@ -1,10 +1,12 @@
-﻿using AppLauncher.Models;
+﻿using AppLauncher.Core.Log;
+using AppLauncher.Models;
 using AppLauncher.Services;
 using AppLauncher.ViewModels;
 using Prism.Ioc;
 using Prism.Navigation.Regions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,11 +35,12 @@ namespace AppLauncher.Views
         private readonly SettingsService _settingsService;
         private readonly ShortcutStore _shortcutStore;
         private readonly IRegionManager _regionManager;
+        private readonly ILoggerService _logger;
 
-
-        public MainWindow(IRegionManager regionManager,IContainerProvider container, CategoryService categoryService, SettingsService settingsService, ShortcutStore shortcutStore)
+        public MainWindow(IRegionManager regionManager,IContainerProvider container, CategoryService categoryService, SettingsService settingsService, ShortcutStore shortcutStore, ILoggerService loggerService)
         {
-            _settingsService = settingsService;
+            _logger = loggerService;
+             _settingsService = settingsService;
             _categoryService = categoryService;
             _container = container;
             _shortcutStore = shortcutStore;
@@ -70,8 +73,17 @@ namespace AppLauncher.Views
             settingsWindow.ShowDialog();
         }
 
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            // 阻止窗口直接关闭，先执行完整清理
+            e.Cancel = true;
+            // 退出 结束后台进程
+            _logger.Info("应用程序正在退出，正在执行清理操作...");
+            Environment.Exit(0);
+        }
+
         // 分类按钮
-     
+
 
     }
 }

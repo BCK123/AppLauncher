@@ -24,6 +24,8 @@ namespace AppLauncher.ViewModels
         public ICommand ShowShortcutCommand { get; }
         public ICommand ShowVisionCommand { get; }
 
+        public ICommand ScanCodenCommand { get; }
+
         private object _currentView;
         public object CurrentView
         {
@@ -49,9 +51,12 @@ namespace AppLauncher.ViewModels
             ShowVisionCommand = new DelegateCommand(() =>
         _regionManager.RequestNavigate("MainRegion", nameof(VisionView)));
 
+            ScanCodenCommand = new DelegateCommand(() =>
+        _regionManager.RequestNavigate("MainRegion", nameof(SightView)));
+
 
             // 删除缓存
-           // DeleteImageCache();
+            // DeleteImageCache();
             // 监控
             // UI 就绪后再启动
             System.Windows.Application.Current.Dispatcher.BeginInvoke(

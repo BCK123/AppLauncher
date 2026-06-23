@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace AppLauncher.Views
 {
     /// <summary>
-    /// Vision.xaml 的交互逻辑
+    /// SightView.xaml 的交互逻辑
     /// </summary>
-    public partial class Vision : UserControl
+    public partial class SightView : Window
     {
-        public Vision()
+        public SightView()
         {
             InitializeComponent();
         }

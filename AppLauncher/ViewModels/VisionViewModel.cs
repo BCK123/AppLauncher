@@ -26,7 +26,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 namespace AppLauncher.ViewModels
 {
-   public class VisionViewModel : BindableBase
+   public  class VisionViewModel : BindableBase
     {
 
 
@@ -97,7 +97,7 @@ namespace AppLauncher.ViewModels
         public VisionViewModel(ILoggerService loggerService)
         {
             _logger = loggerService;
-      _logger.Info("VisionModel 初始化");
+            _logger.Info("VisionModel 初始化");
             BrowseDatasetCommand = new DelegateCommand(OnBrowseDataset);
             OpenDatasetCommand = new DelegateCommand(OnOpenDataset);
             BrowseScriptCommand = new DelegateCommand(OnBrowseScript);
